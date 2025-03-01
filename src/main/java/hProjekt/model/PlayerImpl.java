@@ -80,21 +80,29 @@ public class PlayerImpl implements Player {
     @StudentImplementationRequired("P1.2")
     public int getCredits() {
         // TODO: P1.2
-        return org.tudalgo.algoutils.student.Student.crash("P1.2 - Remove if implemented");
+        return credits;
     }
 
     @Override
     @StudentImplementationRequired("P1.2")
     public void addCredits(int amount) {
         // TODO: P1.2
-        org.tudalgo.algoutils.student.Student.crash("P1.2 - Remove if implemented");
+        credits += amount;
     }
 
     @Override
     @StudentImplementationRequired("P1.2")
     public boolean removeCredits(int amount) {
         // TODO: P1.2
-        return org.tudalgo.algoutils.student.Student.crash("P1.2 - Remove if implemented");
+        if (credits >= amount && amount > 0)
+        {
+            credits -= amount;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override
