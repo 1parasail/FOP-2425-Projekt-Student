@@ -37,35 +37,43 @@ public class PlayerImpl implements Player {
     @StudentImplementationRequired("P1.1")
     public HexGrid getHexGrid() {
         // TODO: P1.1
-        return org.tudalgo.algoutils.student.Student.crash("P1.1 - Remove if implemented");
+        return hexGrid;
     }
 
     @Override
     @StudentImplementationRequired("P1.1")
     public String getName() {
         // TODO: P1.1
-        return org.tudalgo.algoutils.student.Student.crash("P1.1 - Remove if implemented");
+        return name;
     }
 
     @Override
     @StudentImplementationRequired("P1.1")
     public int getID() {
         // TODO: P1.1
-        return org.tudalgo.algoutils.student.Student.crash("P1.1 - Remove if implemented");
+        return id;
     }
 
     @Override
     @StudentImplementationRequired("P1.1")
     public Color getColor() {
         // TODO: P1.1
-        return org.tudalgo.algoutils.student.Student.crash("P1.1 - Remove if implemented");
+        return color;
     }
 
     @Override
     @StudentImplementationRequired("P1.1")
     public boolean isAi() {
         // TODO: P1.1
-        return org.tudalgo.algoutils.student.Student.crash("P1.1 - Remove if implemented");
+        if (aiController == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
     }
 
     @Override
