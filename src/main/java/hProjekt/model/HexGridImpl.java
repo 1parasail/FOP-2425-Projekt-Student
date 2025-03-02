@@ -316,21 +316,99 @@ public class HexGridImpl implements HexGrid {
     @StudentImplementationRequired("P1.4")
     public Map<TilePosition, City> getConnectedCities() {
         // TODO: P1.4
-        return org.tudalgo.algoutils.student.Student.crash("P1.4 - Remove if implemented");
+        Map<TilePosition, City> connectedCities = new HashMap<>();
+        Map<TilePosition, City> cities = this.getCities();
+        Map<Set<TilePosition>, Edge> edges = this.getEdges();
+
+        for (Map.Entry<Set<TilePosition>, Edge> entry : edges.entrySet())
+        {
+            Set<Set<TilePosition>> positionsOfEdges = edges.keySet();
+            Edge edge = entry.getValue();
+
+            for (Map.Entry<TilePosition, City> city : cities.entrySet())
+            {
+                Set<TilePosition> positionsOfCities = cities.keySet();
+                City cityName = city.getValue();
+
+                if (edge.hasRail()==true)
+                {
+                    for (Set<TilePosition> positions : positionsOfEdges)
+                    {
+                        for (TilePosition position : positions)
+                        {
+                            for (TilePosition position2 : positionsOfCities)
+                            {
+                             if (position2.equals(position)==true)
+                             {
+                                 connectedCities.put(position2, cityName);
+                             }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return connectedCities;
     }
 
     @Override
     @StudentImplementationRequired("P1.4")
     public Map<TilePosition, City> getUnconnectedCities() {
         // TODO: P1.4
-        return org.tudalgo.algoutils.student.Student.crash("P1.4 - Remove if implemented");
+        Map<TilePosition, City> unconnectedCities = new HashMap<>();
+        Map<TilePosition, City> cities = this.getCities();
+        Map<Set<TilePosition>, Edge> edges = this.getEdges();
+
+        for (Map.Entry<Set<TilePosition>, Edge> entry : edges.entrySet())
+        {
+            Set<Set<TilePosition>> positionsOfEdges = edges.keySet();
+            Edge edge = entry.getValue();
+
+            for (Map.Entry<TilePosition, City> city : cities.entrySet())
+            {
+                Set<TilePosition> positionsOfCities = cities.keySet();
+                City cityName = city.getValue();
+
+                if (edge.hasRail()==false)
+                {
+                    for (Set<TilePosition> positions : positionsOfEdges)
+                    {
+                        for (TilePosition position : positions)
+                        {
+                            for (TilePosition position2 : positionsOfCities)
+                            {
+                                if (position2.equals(position)==true)
+                                {
+                                    unconnectedCities.put(position2, cityName);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return unconnectedCities;
     }
 
     @Override
     @StudentImplementationRequired("P1.4")
     public Map<TilePosition, City> getStartingCities() {
         // TODO: P1.4
-        return org.tudalgo.algoutils.student.Student.crash("P1.4 - Remove if implemented");
+        Map<TilePosition, City> cities = this.getCities();
+        Map<TilePosition, City> startingCities = new HashMap<>();
+
+        for (Map.Entry<TilePosition, City> entry : cities.entrySet())
+        {
+            TilePosition position = entry.getKey();
+            City cityName = entry.getValue();
+
+            if(cityName.isStartingCity()==true)
+            {
+                startingCities.put(position, cityName);
+            }
+        }
+
+        return startingCities;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package hProjekt.model;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,7 +56,21 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Edge getEdge(final EdgeDirection direction) {
         // TODO: P1.4
-        return org.tudalgo.algoutils.student.Student.crash("P1.4 - Remove if implemented");
+        Set<Edge> edgesOfThis = this.getEdges();
+        Edge edge = null;
+
+        for (Edge e : edgesOfThis)
+        {
+            if (e.equals(direction)==true)
+            {
+                edge = e;
+            }
+        }
+
+        return edge;
+
+
+
     }
 
     @Override
@@ -85,7 +100,27 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Tile getNeighbour(final EdgeDirection direction) {
         // TODO: P1.4
-        return org.tudalgo.algoutils.student.Student.crash("P1.4 - Remove if implemented");
+        Set<Edge> edges = this.getEdges();
+        Set<TilePosition> tiles = new HashSet<>();
+
+        for (Edge edge : edges)
+        {
+            if (edge.equals(direction)==true)
+            {
+                tiles.addAll(edge.getAdjacentTilePositions());
+            }
+        }
+        Tile neighbour = null;
+
+        for (TilePosition tile : tiles)
+        {
+            if(tile.equals(this.getPosition())==false)
+            {
+               neighbour = hexGrid.getTileAt(tile);
+            }
+        }
+
+        return neighbour;
     }
 
     @Override
@@ -97,7 +132,21 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Set<Tile> getConnectedNeighbours(Set<Edge> connectingEdges) {
         // TODO: P1.4
-        return org.tudalgo.algoutils.student.Student.crash("P1.4 - Remove if implemented");
+       Set<Tile> tiles = new HashSet<>();
+       Set<TilePosition> tilesPositions = new HashSet<>();
+
+       for (Edge edge : connectingEdges)
+       {
+           tilesPositions.addAll(edge.getAdjacentTilePositions());
+           tilesPositions.remove(this.getPosition());
+       }
+
+       for (TilePosition tile : tilesPositions)
+       {
+           tiles.add(hexGrid.getTileAt(tile));
+       }
+
+       return tiles;
     }
 
     @Override
