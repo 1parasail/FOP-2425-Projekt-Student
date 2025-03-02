@@ -298,7 +298,8 @@ public class HexGridImpl implements HexGrid {
     @StudentImplementationRequired("P1.3")
     public Map<Set<TilePosition>, Edge> getRails(final Player player) {
         // TODO: P1.3
-        return org.tudalgo.algoutils.student.Student.crash("P1.3 - Remove if implemented");
+        Map<Set<TilePosition>, Edge> rails = Collections.unmodifiableMap(player.getRails());
+        return rails;
     }
 
     @Override

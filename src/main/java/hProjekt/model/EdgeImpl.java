@@ -1,10 +1,6 @@
 package hProjekt.model;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +45,23 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public Set<Edge> getConnectedRails(final Player player) {
         // TODO: P1.3
-        return org.tudalgo.algoutils.student.Student.crash("P1.3 - Remove if implemented");
+       Map<Set<TilePosition>, Edge> rails = player.getRails();
+
+       Set<Edge> connectedRails = new HashSet<>();
+
+       for (Map.Entry<Set<TilePosition>, Edge> entry : rails.entrySet())
+       {
+           Edge edge = entry.getValue();
+
+           if (edge.equals(this)==true)
+           {
+               connectedRails.add(edge);
+           }
+       }
+
+       return connectedRails;
+
+
     }
 
     @Override
@@ -125,7 +137,35 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public boolean addRail(Player player) {
         // TODO: P1.3
-        return org.tudalgo.algoutils.student.Student.crash("P1.3 - Remove if implemented");
+        Map<Set<TilePosition>, Edge> rails = player.getRails();
+
+        boolean added = false;
+
+           if (this.hasRail()==false)
+           {
+               if (player.getHexGrid().getCityAt(this.position1).isStartingCity()==true)
+               {
+                   added = true;
+               }
+           }
+           else
+           {
+               Set<Edge> connectedRails = getConnectedRails(player);
+
+               if (this.connectsTo((Edge) connectedRails)==true)
+               {
+                   added = true;
+               }
+           }
+
+
+        if (added == true)
+        {
+            Set <TilePosition> position = Collections.singleton(this.getPosition1());
+            rails.put(position, this);
+        }
+
+        return added;
     }
 
     @Override
@@ -137,7 +177,14 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public boolean connectsTo(Edge other) {
         // TODO: P1.3
-        return org.tudalgo.algoutils.student.Student.crash("P1.3 - Remove if implemented");
+       if (this.getPosition1().equals(other.getPosition1())==true || this.getPosition2().equals(other.getPosition2())==true)
+       {
+           return true;
+       }
+       else
+       {
+           return false;
+       }
     }
 
     @Override
@@ -149,6 +196,17 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public Set<Edge> getConnectedEdges() {
         // TODO: P1.3
-        return org.tudalgo.algoutils.student.Student.crash("P1.3 - Remove if implemented");
+        Tile tile1 = grid().getTileAt(this.getPosition1());
+        Tile tile2 = grid().getTileAt(this.getPosition2());
+
+        Set<Edge> edges1 = tile1.getEdges();
+        Set<Edge> edges2 = tile2.getEdges();
+
+        Set<Edge> res1 = edges1.stream().filter(edge -> edges2.contains(edge)==false).collect(Collectors.toSet());
+        Set<Edge> res2 = edges2.stream().filter(edge -> edges1.contains(edge)==false).collect(Collectors.toSet());
+
+        res1.addAll(res2);
+
+        return res1;
     }
 }
