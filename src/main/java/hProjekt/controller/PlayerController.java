@@ -376,6 +376,7 @@ public class PlayerController {
                }
            }
        }
+       return buildableRails;
     }
 
     /**
