@@ -12,18 +12,13 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import hProjekt.model.*;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
 import hProjekt.Config;
 import hProjekt.controller.actions.IllegalActionException;
 import hProjekt.controller.actions.PlayerAction;
-import hProjekt.model.Edge;
-import hProjekt.model.GameState;
-import hProjekt.model.Player;
-import hProjekt.model.PlayerState;
-import hProjekt.model.Tile;
-import hProjekt.model.TilePosition;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Pair;
@@ -313,7 +308,29 @@ public class PlayerController {
     @StudentImplementationRequired("P2.1")
     public boolean canBuildRail(Edge edge) {
         // TODO: P2.1
-        return org.tudalgo.algoutils.student.Student.crash("P2.1 - Remove if implemented");
+        if (edge.hasRail()==true)
+        {
+            return false;
+        }
+
+        if (edge.getBaseBuildingCost() <= player.getCredits())
+        {
+            Map<Player, Integer> parallelCost = edge.getParallelCostPerPlayer(player);
+            int valueOfParallelCost = parallelCost.get(player);
+
+            if (valueOfParallelCost <= player.getCredits() || valueOfParallelCost+edge.getBaseBuildingCost()<= player.getCredits())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -324,7 +341,41 @@ public class PlayerController {
     @StudentImplementationRequired("P2.1")
     public Set<Edge> getBuildableRails() {
         // TODO: P2.1
-        return org.tudalgo.algoutils.student.Student.crash("P2.1 - Remove if implemented");
+       Set<Edge> buildableRails = new HashSet<>();
+
+       Map<Set<TilePosition>, Edge> railsOfPlayer = player.getRails();
+
+       if (railsOfPlayer == null)
+       {
+           Map<TilePosition, City> startingCities = getState().getGrid().getStartingCities();
+           Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
+
+           for (TilePosition position : startingCities.keySet())
+           {
+               for (Edge edge : edges.values())
+               {
+                   if(getState().getGrid().getEdge(position, position).connectsTo(edge)==true)
+                   {
+                       buildableRails.add(edge);
+                   }
+               }
+           }
+       }
+       else
+       {
+           Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
+
+           for (Edge edge : railsOfPlayer.values())
+           {
+               for (Edge edge1 : edges.values())
+               {
+                   if (edge1.connectsTo(edge)==true)
+                   {
+                       buildableRails.add(edge1);
+                   }
+               }
+           }
+       }
     }
 
     /**
