@@ -3,6 +3,9 @@ package hProjekt.controller;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
@@ -46,10 +49,18 @@ public class LeaderboardController {
      *                   (false).
      */
     @StudentImplementationRequired("P3.1")
-    public static void savePlayerData(String playerName, int score, boolean ai) {
+    public static void savePlayerData(String playerName, int score, boolean ai) throws IOException {
         // TODO: P3.1
         //@khblvaa
-        org.tudalgo.algoutils.student.Student.crash("P3.1 - Remove if implemented");
+        initializeCsv();
+        String zeit = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String a = String.format("%s,%b,%s,%d%n", playerName, ai, zeit, score);
+        try (BufferedWriter w = Files.newBufferedWriter(Config.CSV_PATH, StandardOpenOption.APPEND)){
+            w.write(a);
+        }
+        catch (IOException e){
+            throw new IOException("CSV kann nicht gespeichert werden :( " + e.getMessage(), e);
+        }
     }
 
     /**
