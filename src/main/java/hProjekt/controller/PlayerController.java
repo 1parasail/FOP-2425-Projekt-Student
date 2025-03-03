@@ -391,7 +391,52 @@ public class PlayerController {
     @StudentImplementationRequired("P2.2")
     public void buildRail(final Edge edge) throws IllegalActionException {
         // TODO: P2.2
-        org.tudalgo.algoutils.student.Student.crash("P2.2 - Remove if implemented");
+       if (canBuildRail(edge)==false)
+       {
+           throw new IllegalActionException("Error! Can't build Rail");
+       }
+
+       if (edge.hasRail()==true)
+       {
+           List<Player> owners = edge.getRailOwners();
+
+           for (Player player : owners)
+           {
+               if (this.player.equals(player) == false)
+               {
+                   int cost = edge.getTotalParallelCost(this.player);
+                   player.addCredits(cost);
+                   this.player.removeCredits(cost+ edge.getBaseBuildingCost());
+               }
+           }
+
+           edge.addRail(this.player);
+       }
+       else
+       {
+           edge.addRail(this.player);
+
+           Map<TilePosition, City> cities = getState().getGrid().getCities();
+
+           for (Map.Entry<TilePosition, City> entry : cities.entrySet())
+           {
+               TilePosition position = entry.getKey();
+               City city = entry.getValue();
+
+               Set<TilePosition> adjacentTilePositions = edge.getAdjacentTilePositions();
+
+               for (TilePosition adjacentTilePosition : adjacentTilePositions)
+               {
+                   if (adjacentTilePosition.equals(position)==true)
+                   {
+                       if (city.isStartingCity()==false)
+                       {
+                           this.player.addCredits(Config.CITY_CONNECTION_BONUS);
+                       }
+                   }
+               }
+           }
+       }
     }
 
     /**
