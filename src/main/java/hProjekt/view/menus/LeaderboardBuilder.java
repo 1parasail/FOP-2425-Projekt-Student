@@ -1,5 +1,6 @@
 package hProjekt.view.menus;
 
+import java.io.IOException;
 import java.util.List;
 
 import hProjekt.controller.LeaderboardController;
@@ -60,8 +61,13 @@ public class LeaderboardBuilder implements Builder<Region> {
         TableView<LeaderboardEntry> tableView = new TableView<>();
         tableView.getStyleClass().add("leaderboard-table");
         setupTableColumns(tableView);
-        ObservableList<LeaderboardEntry> entries = FXCollections
-                .observableArrayList(LeaderboardController.loadLeaderboardData());
+        ObservableList<LeaderboardEntry> entries = null;
+        try {
+            entries = FXCollections
+                    .observableArrayList(LeaderboardController.loadLeaderboardData());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         tableView.setItems(entries);
         tableView.getSortOrder().setAll(List.of(scoreColumn));
         tableView.sort();

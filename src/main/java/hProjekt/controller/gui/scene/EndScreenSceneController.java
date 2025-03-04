@@ -1,5 +1,6 @@
 package hProjekt.controller.gui.scene;
 
+import java.io.IOException;
 import java.util.List;
 
 import hProjekt.controller.GameController;
@@ -21,7 +22,7 @@ public class EndScreenSceneController implements SceneController {
      *
      * @param players the players to display on the end screen
      */
-    public EndScreenSceneController(List<Player> players, GameController gameController) {
+    public EndScreenSceneController(List<Player> players, GameController gameController) throws IOException {
         for (Player player : players) {
             LeaderboardController.savePlayerData(player.getName(), player.getCredits(), player.isAi());
         }

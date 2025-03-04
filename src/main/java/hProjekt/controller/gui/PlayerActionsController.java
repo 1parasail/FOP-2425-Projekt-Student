@@ -8,18 +8,13 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import hProjekt.controller.actions.*;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
 import hProjekt.Config;
 import hProjekt.controller.PlayerController;
 import hProjekt.controller.PlayerObjective;
-import hProjekt.controller.actions.ChooseCitiesAction;
-import hProjekt.controller.actions.ChooseRailsAction;
-import hProjekt.controller.actions.ConfirmBuildAction;
-import hProjekt.controller.actions.ConfirmDrive;
-import hProjekt.controller.actions.DriveAction;
-import hProjekt.controller.actions.RollDiceAction;
 import hProjekt.controller.gui.scene.GameBoardController;
 import hProjekt.model.Edge;
 import hProjekt.model.Player;
@@ -142,7 +137,35 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.1")
     private void updateUIBasedOnObjective(final PlayerObjective objective) {
         // TODO: P4.1
-        org.tudalgo.algoutils.student.Student.crash("P4.1 - Remove if implemented");
+        //@khblvaa
+        resetUiToBaseState();
+        removeAllHighlights();
+        updatePlayerInformation();
+
+        if(getPlayer().isAi()){
+            return;
+        }
+
+        Set<Class<? extends PlayerAction>> allowed = objective.getAllowedActions();
+
+        if (allowed.contains(BuildRailAction.class)) {
+            addBuildHandlers();
+        }
+        if (allowed.contains(RollDiceAction.class)) {
+            rollDiceOverlayView.enableRollDiceButton();
+        }
+        if(allowed.contains(ChooseCitiesAction.class)){
+            cityOverlayView.enableChooseButton();
+        }
+        if (allowed.contains(ChooseRailsAction.class)) {
+            configureRailSelection();
+        }
+        if(allowed.contains(ConfirmBuildAction.class)){
+            showRentingConfirmation();
+        }
+        if (allowed.contains(DriveAction.class)) {
+            updateDriveableTiles();
+        }
     }
 
     /**

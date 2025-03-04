@@ -1,5 +1,6 @@
 package hProjekt.view.menus;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -49,10 +50,15 @@ public class EndScreenBuilder implements Builder<Region> {
         List<Player> sortedPlayers = new ArrayList<>(players);
         sortedPlayers.sort(Comparator.comparingInt(Player::getCredits).reversed());
 
-        int currentHighscore = LeaderboardController.loadLeaderboardData().stream()
-                .sorted((score1, score2) -> Integer.compare(score2.getScore(), score1.getScore())).findFirst()
-                .map(LeaderboardEntry::getScore)
-                .orElse(0);
+        int currentHighscore = 0;
+        try {
+            currentHighscore = LeaderboardController.loadLeaderboardData().stream()
+                    .sorted((score1, score2) -> Integer.compare(score2.getScore(), score1.getScore())).findFirst()
+                    .map(LeaderboardEntry::getScore)
+                    .orElse(0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // Root container for the entire screen
         StackPane rootContainer = new StackPane();

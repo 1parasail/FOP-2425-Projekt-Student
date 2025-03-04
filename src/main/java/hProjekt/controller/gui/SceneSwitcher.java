@@ -1,5 +1,6 @@
 package hProjekt.controller.gui;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -99,7 +100,11 @@ public class SceneSwitcher {
         LEADERBOARD(LeaderboardSceneController::new),
         END_SCREEN(() -> {
             List<Player> players = getInstance().gameController.getState().getPlayers();
-            return new EndScreenSceneController(players, getInstance().gameController);
+            try {
+                return new EndScreenSceneController(players, getInstance().gameController);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }),
         SETTINGS(SettingsSceneController::new);
 
