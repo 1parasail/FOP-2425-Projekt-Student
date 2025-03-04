@@ -399,7 +399,74 @@ public class GameController {
     @StudentImplementationRequired("P2.7")
     private void handleDriving() {
         // TODO: P2.7
-        org.tudalgo.algoutils.student.Student.crash("P2.7 - Remove if implemented");
+
+        List<Player> drivingPlayers = getState().getDrivingPlayers();
+
+        if (drivingPlayers.size()==0)
+        {
+            return;
+        }
+
+        if (drivingPlayers.size()==1)
+        {
+
+            for (int i = 0; i < drivingPlayers.size(); i++)
+            {
+                Player player = drivingPlayers.get(i);
+                getState().setPlayerPositon(player, getTargetCity().getPosition());
+                getState().setWinner(player);
+            }
+            return;
+        }
+
+        List<Player> finishedPlayers = new ArrayList<>();
+
+        while(finishedPlayers.size() < Config.WINNING_CREDITS.size() || finishedPlayers.size() < drivingPlayers.size())
+        {
+            Map<Player, TilePosition> positions = getState().getPlayerPositions();
+
+            for (Map.Entry<Player, TilePosition> entry : positions.entrySet())
+            {
+                Player player = entry.getKey();
+                TilePosition position = entry.getValue();
+
+                for (int i = 0; i < drivingPlayers.size(); i++)
+                {
+                    if (player.equals(drivingPlayers.get(i))==true)
+                    {
+                        if (position.equals(getTargetCity().getPosition())==false)
+                        {
+                            drivingPlayers.get(i).removeCredits(Config.DICE_SIDES);
+                        }
+                        else
+                        {
+                            finishedPlayers.add(drivingPlayers.get(i));
+                            drivingPlayers.remove(i);
+                        }
+                    }
+
+                }
+            }
+
+            drivingPlayers.sort((player1, player2) -> Integer.compare(player1.getCredits(), player2.getCredits()));
+
+            Map<Player, PlayerController> playerControllers = getPlayerControllers();
+
+            for (Map.Entry<Player, PlayerController> entry : playerControllers.entrySet())
+            {
+                Player player = entry.getKey();
+                PlayerController playerController = entry.getValue();
+
+                for (int i = 0; i < drivingPlayers.size(); i++)
+                {
+                    if (player.equals(drivingPlayers.get(i))==true)
+                    {
+                        playerController.setPlayerObjective(PlayerObjective.ROLL_DICE);
+                        playerController.setPlayerObjective(PlayerObjective.DRIVE);
+                    }
+                }
+            }
+        }
     }
 
     /**
