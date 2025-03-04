@@ -363,7 +363,26 @@ public class GameController {
     @StudentImplementationRequired("P2.6")
     private void letPlayersChoosePath() {
         // TODO: P2.6
-        org.tudalgo.algoutils.student.Student.crash("P2.6 - Remove if implemented");
+        Map<Player, PlayerController> playerControllers = getPlayerControllers();
+
+        for (Map.Entry<Player, PlayerController> entry : playerControllers.entrySet())
+        {
+            PlayerController playerController = entry.getValue();
+            Player player = entry.getKey();
+
+            playerController.resetDrivingPhase();
+            getState().setPlayerPositon(player, getStartingCity().getPosition());
+
+            if (playerController.getPlayerObjective().equals(PlayerObjective.CHOOSE_PATH)==false)
+            {
+                playerController.setPlayerObjective(PlayerObjective.CHOOSE_PATH);
+
+                if (playerController.getPlayerObjective().equals(PlayerObjective.CONFIRM_PATH)==false)
+                {
+                    playerController.setPlayerObjective(PlayerObjective.CONFIRM_PATH);
+                }
+            }
+        }
     }
 
     /**

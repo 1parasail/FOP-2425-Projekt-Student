@@ -699,7 +699,7 @@ public class PlayerController {
                 Tile tile = entry.getKey();
                 List<Tile> rideTiles = entry.getValue();
 
-                for (int i =0; i < rideTiles.size(); i++)
+                for (int i = 0; i < rideTiles.size(); i++)
                 {
                     if (rideTiles.get(i).equals(targetTile)==false)
                     {
