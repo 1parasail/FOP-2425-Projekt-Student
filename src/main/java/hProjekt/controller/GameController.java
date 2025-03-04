@@ -33,7 +33,7 @@ public class GameController {
     private final Supplier<Integer> dice;
     private final IntegerProperty currentDiceRoll = new SimpleIntegerProperty(0);
     private final IntegerProperty roundCounter = new SimpleIntegerProperty(0);
-    private final Property<Pair<City, City>> chosenCitiesProperty = new SimpleObjectProperty<>();
+    private Property<Pair<City, City>> chosenCitiesProperty = new SimpleObjectProperty<>();
 
     private final Property<PlayerController> activePlayerController = new SimpleObjectProperty<>();
 
@@ -299,7 +299,45 @@ public class GameController {
     @StudentImplementationRequired("P2.4")
     public void chooseCities() {
         // TODO: P2.4
+        Map<TilePosition, City> cities = getState().getGrid().getCities();
 
+        Map<TilePosition, City> startCity = new HashMap<>();
+        Map<TilePosition, City> finishCity = new HashMap<>();
+
+
+        int randomForStartCity = Config.RANDOM.nextInt(cities.size());
+        startCity.put((TilePosition) cities.keySet().toArray()[randomForStartCity], (City) cities.values().toArray()[randomForStartCity]);
+
+        int randomForFinishtCity = Config.RANDOM.nextInt(cities.size());
+        finishCity.put((TilePosition) cities.keySet().toArray()[randomForFinishtCity], (City) cities.values().toArray()[randomForFinishtCity]);
+
+        if (startCity.keySet().contains(finishCity.keySet())==true)
+        {
+            while (startCity.keySet().contains(finishCity.keySet())==false)
+            {
+                int anotherRandomForFinishtCity = Config.RANDOM.nextInt(cities.size());
+                finishCity.put((TilePosition) cities.keySet().toArray()[anotherRandomForFinishtCity], (City) cities.values().toArray()[anotherRandomForFinishtCity]);
+            }
+        }
+
+        for (City city : startCity.values())
+        {
+            getState().addChosenCity(city);
+        }
+
+        for (City city : finishCity.values())
+        {
+            getState().addChosenCity(city);
+        }
+
+        for (City city : startCity.values())
+        {
+            for (City city1 : finishCity.values())
+            {
+                Pair<City, City> cityPair = new Pair<>(city, city1);
+                chosenCitiesProperty = (Property<Pair<City, City>>) cityPair;
+            }
+        }
     }
 
     /**
