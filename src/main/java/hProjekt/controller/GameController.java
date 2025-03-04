@@ -7,17 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import hProjekt.controller.actions.RollDiceAction;
+import hProjekt.model.*;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
 import hProjekt.Config;
 import hProjekt.controller.actions.ConfirmBuildAction;
 import hProjekt.controller.actions.PlayerAction;
-import hProjekt.model.City;
-import hProjekt.model.GameState;
-import hProjekt.model.HexGrid;
-import hProjekt.model.HexGridImpl;
-import hProjekt.model.Player;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
@@ -257,7 +254,30 @@ public class GameController {
     @StudentImplementationRequired("P2.3")
     private void executeBuildingPhase() {
         // TODO: P2.3
-        org.tudalgo.algoutils.student.Student.crash("P2.3 - Remove if implemented");
+        Map<TilePosition, City> unconnectedCities = getState().getGrid().getUnconnectedCities();
+
+        int countOfUnconnectedCities = unconnectedCities.values().size();
+
+        while (countOfUnconnectedCities >= Config.UNCONNECTED_CITIES_START_THRESHOLD)
+        {
+            int countOfRounds = roundCounter.get();
+            roundCounter.set(countOfRounds+1);
+
+            int indexOfPlayer = (countOfRounds-1) % state.getPlayers().size();
+
+            Player playerOfRound = state.getPlayers().get(indexOfPlayer);
+
+            PlayerController playerControllerOfRound = new PlayerController(this, playerOfRound);
+
+            playerControllerOfRound.setPlayerObjective(PlayerObjective.ROLL_DICE);
+
+            int resOfDice = getCurrentDiceRoll();
+
+            playerControllerOfRound.setBuildingBudget(resOfDice+playerOfRound.getCredits());
+
+            waitForBuild(playerControllerOfRound);
+
+        }
     }
 
     /**
