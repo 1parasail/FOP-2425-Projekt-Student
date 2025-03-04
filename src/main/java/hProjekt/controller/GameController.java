@@ -1,12 +1,10 @@
 package hProjekt.controller;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
+import hProjekt.controller.actions.IllegalActionException;
 import hProjekt.controller.actions.RollDiceAction;
 import hProjekt.model.*;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
@@ -275,6 +273,20 @@ public class GameController {
 
             playerControllerOfRound.setBuildingBudget(resOfDice+playerOfRound.getCredits());
 
+            Set<Edge> buildableRails = playerControllerOfRound.getBuildableRails();
+
+            for (Edge buildableRail : buildableRails)
+            {
+                try
+                {
+                    playerControllerOfRound.buildRail(buildableRail);
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException("Could not build rail " + buildableRail);
+                }
+            }
+
             waitForBuild(playerControllerOfRound);
         }
     }
@@ -287,7 +299,7 @@ public class GameController {
     @StudentImplementationRequired("P2.4")
     public void chooseCities() {
         // TODO: P2.4
-        org.tudalgo.algoutils.student.Student.crash("P2.4 - Remove if implemented");
+
     }
 
     /**

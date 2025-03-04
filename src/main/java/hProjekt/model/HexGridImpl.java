@@ -298,8 +298,24 @@ public class HexGridImpl implements HexGrid {
     @StudentImplementationRequired("P1.3")
     public Map<Set<TilePosition>, Edge> getRails(final Player player) {
         // TODO: P1.3
-        Map<Set<TilePosition>, Edge> rails = Collections.unmodifiableMap(player.getRails());
-        return rails;
+        HexGrid hexGrid = player.getHexGrid();
+        Map<Set<TilePosition>, Edge> rails = new HashMap<>();
+        Map<Set<TilePosition>, Edge> edges = hexGrid.getEdges();
+
+        for (Map.Entry<Set<TilePosition>, Edge> entry : edges.entrySet())
+        {
+            for (TilePosition tilePosition : entry.getKey())
+            {
+                Edge edge = entry.getValue();
+
+                if (edge.hasRail()==true)
+                {
+                    rails.put(Set.of(tilePosition), edge);
+                }
+            }
+        }
+
+        return Collections.unmodifiableMap(rails);
     }
 
     @Override

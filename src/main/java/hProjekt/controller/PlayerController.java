@@ -343,7 +343,7 @@ public class PlayerController {
         // TODO: P2.1
        Set<Edge> buildableRails = new HashSet<>();
 
-       Map<Set<TilePosition>, Edge> railsOfPlayer = player.getRails();
+       Map<Set<TilePosition>, Edge> railsOfPlayer = this.player.getRails();
 
        if (railsOfPlayer == null)
        {
