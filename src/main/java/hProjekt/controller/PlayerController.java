@@ -586,7 +586,14 @@ public class PlayerController {
     @StudentImplementationRequired("P2.5")
     public boolean canDrive() {
         // TODO: P2.5
-        return org.tudalgo.algoutils.student.Student.crash("P2.5 - Remove if implemented");
+        if (getState().equals(GamePhase.DRIVING_PHASE)==true && this.getPlayerState().equals(GamePhase.DRIVING_PHASE)==true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
