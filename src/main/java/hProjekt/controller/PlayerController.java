@@ -676,6 +676,42 @@ public class PlayerController {
     @StudentImplementationRequired("P2.5")
     public void drive(final Tile targetTile) throws IllegalActionException {
         // TODO: P2.5
-        org.tudalgo.algoutils.student.Student.crash("P2.5 - Remove if implemented");
+        if (this.canDrive()==false || this.getDrivableTiles().containsKey(targetTile)==false)
+        {
+            throw new IllegalActionException("Driving is not allowed");
+        }
+        else
+        {
+            int rollDice = gameController.castDice();
+            int countOfTiles = 0;
+            Map<Tile, List<Tile>> drivableTiles = getDrivableTiles();
+
+            for (Map.Entry<Tile, List<Tile>> entry : drivableTiles.entrySet())
+            {
+                List<Tile> tiles = entry.getValue();
+                countOfTiles = tiles.size();
+            }
+
+            int surplus = rollDice - countOfTiles;
+
+            for (Map.Entry<Tile, List<Tile>> entry : drivableTiles.entrySet())
+            {
+                Tile tile = entry.getKey();
+                List<Tile> rideTiles = entry.getValue();
+
+                for (int i =0; i < rideTiles.size(); i++)
+                {
+                    if (rideTiles.get(i).equals(targetTile)==false)
+                    {
+                        this.getState().setPlayerPositon(this.player, rideTiles.get(i).getPosition());
+                    }
+                    else
+                    {
+                        this.getState().setPlayerPositon(this.player, targetTile.getPosition());
+                        this.getState().addPlayerPointSurplus(this.player, surplus);
+                    }
+                }
+            }
+        }
     }
 }
