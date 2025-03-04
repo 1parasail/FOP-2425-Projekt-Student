@@ -3,6 +3,7 @@ package hProjekt.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import hProjekt.controller.actions.IllegalActionException;
 import hProjekt.controller.actions.RollDiceAction;
@@ -480,7 +481,47 @@ public class GameController {
     @StudentImplementationRequired("P2.8")
     private List<Player> getWinners() {
         // TODO: P2.8
-        return org.tudalgo.algoutils.student.Student.crash("P2.8 - Remove if implemented");
+        List<Player> drivingPlayers = getState().getDrivingPlayers();
+        Map<Player, TilePosition> positionMap = getState().getPlayerPositions();
+        List<Player> winners = new ArrayList<>();
+
+        for (Map.Entry<Player, TilePosition> entry : positionMap.entrySet())
+        {
+            Player player = entry.getKey();
+            TilePosition position = entry.getValue();
+
+            for (int i = 0; i < drivingPlayers.size(); i++)
+            {
+                if (player.equals(drivingPlayers.get(i))==true)
+                {
+                    if(position.equals(getTargetCity().getPosition())==true)
+                    {
+                        winners.add(player);
+                    }
+                }
+            }
+        }
+
+        int difference = winners.size() - Config.WINNING_CREDITS.size();
+
+        for (int i = 0; i < difference; i++)
+        {
+            winners.remove(winners.size()-1);
+        }
+
+        Map<Player, Integer> playersPointSurplus = getState().getPlayerPointSurplus();
+        Map<Player, Integer> sortedPlayersPointSurplus = (Map<Player, Integer>) playersPointSurplus.entrySet().stream().sorted((point1, point2) -> Integer.compare(point2.getValue(), point1.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (point1, point2)->point1));
+
+        for (Map.Entry<Player, Integer> entry : sortedPlayersPointSurplus.entrySet())
+        {
+            Player player = entry.getKey();
+
+            for (int i = 0; i < winners.size(); i++)
+            {
+                winners.set(i,player);
+            }
+        }
+        return winners;
     }
 
     /**
