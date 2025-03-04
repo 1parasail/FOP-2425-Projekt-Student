@@ -539,6 +539,34 @@ public class GameController {
     @StudentImplementationRequired("P2.9")
     private void executeDrivingPhase() {
         // TODO: P2.9
+        while(getState().getChosenCities().size()==0)
+        {
+            int countOfRounds = roundCounter.get();
+            roundCounter.set(countOfRounds+1);
+
+            getState().resetDrivingPlayers();
+            getState().resetPlayerPositions();
+            getState().resetPlayerSurplus();
+
+            if (roundCounter.get() % 3 == 0)
+            {
+                buildingDuringDrivingPhase();
+            }
+
+            int indexOfPlayer = (roundCounter.get()-1) % (getState().getPlayers().size());
+            PlayerController controllerOfPlayer = getPlayerControllers().get(indexOfPlayer);
+            controllerOfPlayer.setPlayerObjective(PlayerObjective.CHOOSE_CITIES);
+
+            this.letPlayersChoosePath();
+            this.handleDriving();
+
+            List<Player> winners = getWinners();
+
+            for (int i = 0; i < winners.size(); i++)
+            {
+                winners.get(i).addCredits(Config.WINNING_CREDITS.get(i));
+            }
+        }
     }
 
     /**
