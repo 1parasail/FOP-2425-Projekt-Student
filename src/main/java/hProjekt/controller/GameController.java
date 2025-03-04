@@ -449,7 +449,7 @@ public class GameController {
                 }
             }
 
-            drivingPlayers.sort((player1, player2) -> Integer.compare(player1.getCredits(), player2.getCredits()));
+            drivingPlayers.sort(Comparator.comparingInt(Player::getCredits));
 
             Map<Player, PlayerController> playerControllers = getPlayerControllers();
 
@@ -539,7 +539,6 @@ public class GameController {
     @StudentImplementationRequired("P2.9")
     private void executeDrivingPhase() {
         // TODO: P2.9
-        org.tudalgo.algoutils.student.Student.crash("P2.9 - Remove if implemented");
     }
 
     /**
