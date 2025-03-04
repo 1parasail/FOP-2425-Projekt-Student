@@ -263,7 +263,7 @@ public class GameController {
             int countOfRounds = roundCounter.get();
             roundCounter.set(countOfRounds+1);
 
-            int indexOfPlayer = (countOfRounds-1) % state.getPlayers().size();
+            int indexOfPlayer = (roundCounter.get()-1) % state.getPlayers().size();
 
             Player playerOfRound = state.getPlayers().get(indexOfPlayer);
 
@@ -271,12 +271,11 @@ public class GameController {
 
             playerControllerOfRound.setPlayerObjective(PlayerObjective.ROLL_DICE);
 
-            int resOfDice = getCurrentDiceRoll();
+            int resOfDice = castDice();
 
             playerControllerOfRound.setBuildingBudget(resOfDice+playerOfRound.getCredits());
 
             waitForBuild(playerControllerOfRound);
-
         }
     }
 
