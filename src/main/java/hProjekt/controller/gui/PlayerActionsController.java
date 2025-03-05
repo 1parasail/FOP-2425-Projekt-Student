@@ -472,7 +472,31 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.3")
     private void highlightStartingTiles() {
         // TODO: P4.3
-        org.tudalgo.algoutils.student.Student.crash("P4.3 - Remove if implemented");
+        selectedTile.setValue(null);
+        HexGridController grid = getHexGridController();
+        Set<Tile> highlighted;
+        if (getPlayerController().hasPath()){
+            highlighted = (Set<Tile>) getPlayer().getRails();
+        }
+        else {
+            highlighted = (Set<Tile>) getHexGridController().getCityControllersMap();
+        }
+        for (Tile tile : highlighted) {
+            TileController tileController = grid.getTileControllersMap().get(tile);
+            if (tileController != null) {
+                tileController.highlight(clickedTile -> {
+
+                    if (selectedTile.getValue() == clickedTile) {
+                        selectedTile.setValue(null);
+                        highlightStartingTiles();
+                    } else {
+                        selectedTile.setValue(clickedTile);
+                        grid.unhighlightTiles();
+                        tileController.highlight(tile1 -> {});
+                    }
+                });
+            }
+        }
     }
 
     /**
