@@ -164,4 +164,5 @@ public interface Edge {
      * @return the rent that needs to be paid to the other players on this edge
      */
     Map<Player, Integer> getRentingCost(Player player);
+
 }

@@ -1,5 +1,6 @@
 package hProjekt.controller.gui;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -428,7 +429,19 @@ public class PlayerActionsController {
     private List<Edge> trimPath(BiFunction<Pair<Integer, Integer>, Integer, Boolean> terminateFunction,
             List<Edge> path) {
         // TODO: P4.2
-        return org.tudalgo.algoutils.student.Student.crash("P4.2 - Remove if implemented");
+        List<Edge> kleinpath = new ArrayList<>();
+        Pair<Integer, Integer> cost = new Pair<>(0, 0);
+        int distance = 0;
+        for (Edge a : path) {
+            cost = new Pair<>(cost.getKey() + a.getBaseBuildingCost(), cost.getValue() + a.getTotalParallelCost(getPlayer()));
+
+            kleinpath.add(a);
+            if (!terminateFunction.apply(cost, distance)) {
+                break;
+            }
+        }
+        // Этот метод корявый, потому что я не смогла понять где мне взять дистанцию((
+        return kleinpath;
     }
 
     /**
@@ -439,7 +452,13 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.2")
     private void highlightPath(List<Edge> path) {
         // TODO: P4.2
-        org.tudalgo.algoutils.student.Student.crash("P4.2 - Remove if implemented");
+        HexGridController grid = getHexGridController();
+        for (Edge a : path) {
+            EdgeController edge = grid.getEdgeControllersMap().get(a);
+            if (edge != null) {
+                edge.highlight();
+            }
+        }
     }
 
     /**
