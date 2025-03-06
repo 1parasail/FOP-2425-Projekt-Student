@@ -1,8 +1,13 @@
 package hProjekt.controller;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
@@ -46,9 +51,18 @@ public class LeaderboardController {
      *                   (false).
      */
     @StudentImplementationRequired("P3.1")
-    public static void savePlayerData(String playerName, int score, boolean ai) {
+    public static void savePlayerData(String playerName, int score, boolean ai) throws IOException {
         // TODO: P3.1
         org.tudalgo.algoutils.student.Student.crash("P3.1 - Remove if implemented");
+        initializeCsv();
+        String zeit = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String a = String.format("%s,%b,%s,%d%n", playerName, ai, zeit, score);
+        try (BufferedWriter w = Files.newBufferedWriter(Config.CSV_PATH, StandardOpenOption.APPEND)){
+            w.write(a);
+        }
+        catch (IOException e){
+            throw new IOException("CSV kann nicht gespeichert werden :( " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -59,8 +73,25 @@ public class LeaderboardController {
      *         CSV file.
      */
     @StudentImplementationRequired("P3.2")
-    public static List<LeaderboardEntry> loadLeaderboardData() {
+    public static List<LeaderboardEntry> loadLeaderboardData() throws IOException {
         // TODO: P3.2
-        return org.tudalgo.algoutils.student.Student.crash("P3.2 - Remove if implemented");
+        List<LeaderboardEntry> list = new ArrayList<>();
+        try (BufferedReader br = Files.newBufferedReader(Config.CSV_PATH)) {
+            br.readLine();
+            String line = br.readLine();
+            while (line != null) {
+                String[] list1 = line.split(",");
+                String name = list1[0];
+                boolean ai = Boolean.parseBoolean(list1[1]);
+                String zeit = list1[2];
+                int score = Integer.parseInt(list1[3]);
+                list.add(new LeaderboardEntry(name, ai, zeit, score));
+                line = br.readLine();
+            }
+
+        } catch (IOException e) {
+            throw new IOException("LeaderBoard kann nicht gelesen werden :( " + e.getMessage(), e);
+        }
+        return list;
     }
 }

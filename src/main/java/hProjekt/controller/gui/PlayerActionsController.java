@@ -1,5 +1,6 @@
 package hProjekt.controller.gui;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -8,18 +9,13 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import hProjekt.controller.actions.*;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
 import hProjekt.Config;
 import hProjekt.controller.PlayerController;
 import hProjekt.controller.PlayerObjective;
-import hProjekt.controller.actions.ChooseCitiesAction;
-import hProjekt.controller.actions.ChooseRailsAction;
-import hProjekt.controller.actions.ConfirmBuildAction;
-import hProjekt.controller.actions.ConfirmDrive;
-import hProjekt.controller.actions.DriveAction;
-import hProjekt.controller.actions.RollDiceAction;
 import hProjekt.controller.gui.scene.GameBoardController;
 import hProjekt.model.Edge;
 import hProjekt.model.Player;
@@ -142,7 +138,34 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.1")
     private void updateUIBasedOnObjective(final PlayerObjective objective) {
         // TODO: P4.1
-        org.tudalgo.algoutils.student.Student.crash("P4.1 - Remove if implemented");
+        resetUiToBaseState();
+        removeAllHighlights();
+        updatePlayerInformation();
+
+        if(getPlayer().isAi()){
+            return;
+        }
+
+        Set<Class<? extends PlayerAction>> allowed = objective.getAllowedActions();
+
+        if (allowed.contains(BuildRailAction.class)) {
+            addBuildHandlers();
+        }
+        if (allowed.contains(RollDiceAction.class)) {
+            rollDiceOverlayView.enableRollDiceButton();
+        }
+        if(allowed.contains(ChooseCitiesAction.class)){
+            cityOverlayView.enableChooseButton();
+        }
+        if (allowed.contains(ChooseRailsAction.class)) {
+            configureRailSelection();
+        }
+        if(allowed.contains(ConfirmBuildAction.class)){
+            showRentingConfirmation();
+        }
+        if (allowed.contains(DriveAction.class)) {
+            updateDriveableTiles();
+        }
     }
 
     /**
@@ -405,7 +428,18 @@ public class PlayerActionsController {
     private List<Edge> trimPath(BiFunction<Pair<Integer, Integer>, Integer, Boolean> terminateFunction,
             List<Edge> path) {
         // TODO: P4.2
-        return org.tudalgo.algoutils.student.Student.crash("P4.2 - Remove if implemented");
+        List<Edge> kleinpath = new ArrayList<>();
+        Pair<Integer, Integer> cost = new Pair<>(0, 0);
+        int distance = 0;
+        for (Edge a : path) {
+            cost = new Pair<>(cost.getKey() + a.getBaseBuildingCost(), cost.getValue() + a.getTotalParallelCost(getPlayer()));
+
+            kleinpath.add(a);
+            if (!terminateFunction.apply(cost, distance)) {
+                break;
+            }
+        }
+        return kleinpath;
     }
 
     /**
@@ -416,7 +450,13 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.2")
     private void highlightPath(List<Edge> path) {
         // TODO: P4.2
-        org.tudalgo.algoutils.student.Student.crash("P4.2 - Remove if implemented");
+        HexGridController grid = getHexGridController();
+        for (Edge a : path) {
+            EdgeController edge = grid.getEdgeControllersMap().get(a);
+            if (edge != null) {
+                edge.highlight();
+            }
+        }
     }
 
     /**
@@ -430,7 +470,31 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.3")
     private void highlightStartingTiles() {
         // TODO: P4.3
-        org.tudalgo.algoutils.student.Student.crash("P4.3 - Remove if implemented");
+        selectedTile.setValue(null);
+        HexGridController grid = getHexGridController();
+        Set<Tile> highlighted;
+        if (getPlayerController().hasPath()){
+            highlighted = (Set<Tile>) getPlayer().getRails();
+        }
+        else {
+            highlighted = (Set<Tile>) getHexGridController().getCityControllersMap();
+        }
+        for (Tile tile : highlighted) {
+            TileController tileController = grid.getTileControllersMap().get(tile);
+            if (tileController != null) {
+                tileController.highlight(clickedTile -> {
+
+                    if (selectedTile.getValue() == clickedTile) {
+                        selectedTile.setValue(null);
+                        highlightStartingTiles();
+                    } else {
+                        selectedTile.setValue(clickedTile);
+                        grid.unhighlightTiles();
+                        tileController.highlight(tile1 -> {});
+                    }
+                });
+            }
+        }
     }
 
     /**
