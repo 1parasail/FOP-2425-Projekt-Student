@@ -505,7 +505,39 @@ public class PlayerActionsController {
     @StudentImplementationRequired("P4.4")
     public void addBuildHandlers() {
         // TODO: P4.4
-        org.tudalgo.algoutils.student.Student.crash("P4.4 - Remove if implemented");
+        selectedRailPath.clear();
+        selectedTileSubscription.unsubscribe();
+
+        if (getPlayerController().getBuildingBudget() <= 0) {
+            return;
+        }
+        selectedRailPath.addListener(selectedRailPathListener);
+
+        setupTileSelectionHandlers(
+            (tileController, startTile) -> {
+                List<Edge> path = findBuildPath(startTile, tileController.getTile());
+
+                if (path.isEmpty()) {
+                    return;
+                }
+
+                highlightTrimmedPath(
+                    (costs, length) -> {
+                        int playerCredits = getPlayer().getCredits();
+                        int remainingBudget = getPlayerState().buildingBudget();
+                        return costs.getKey() > remainingBudget || costs.getValue() > playerCredits;
+                    },
+                    path
+                );
+                selectedRailPath.setAll(path);
+            },
+            tileController -> {
+                if (!selectedRailPath.isEmpty()) {
+                    getPlayerController().triggerAction(new BuildRailAction(selectedRailPath));
+                }
+            },
+            Set.of()
+        );
     }
 
     /**
