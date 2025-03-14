@@ -94,7 +94,7 @@ public class PlayerImpl implements Player {
     @StudentImplementationRequired("P1.2")
     public boolean removeCredits(int amount) {
         // TODO: P1.2
-        if (credits >= amount && amount > 0)
+        if (credits >= amount && amount >= 0)
         {
             credits -= amount;
             return true;

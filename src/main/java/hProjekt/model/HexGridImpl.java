@@ -338,33 +338,20 @@ public class HexGridImpl implements HexGrid {
 
         for (Map.Entry<Set<TilePosition>, Edge> entry : edges.entrySet())
         {
-            Set<Set<TilePosition>> positionsOfEdges = edges.keySet();
             Edge edge = entry.getValue();
 
-            for (Map.Entry<TilePosition, City> city : cities.entrySet())
+            if (edge.hasRail()==true)
             {
-                Set<TilePosition> positionsOfCities = cities.keySet();
-                City cityName = city.getValue();
-
-                if (edge.hasRail()==true)
+                for (TilePosition position : entry.getKey())
                 {
-                    for (Set<TilePosition> positions : positionsOfEdges)
+                    if (cities.containsKey(position)==true)
                     {
-                        for (TilePosition position : positions)
-                        {
-                            for (TilePosition position2 : positionsOfCities)
-                            {
-                             if (position2.equals(position)==true)
-                             {
-                                 connectedCities.put(position2, cityName);
-                             }
-                            }
-                        }
+                        connectedCities.put(position, cities.get(position));
                     }
                 }
             }
         }
-        return connectedCities;
+        return Collections.unmodifiableMap(connectedCities);
     }
 
     @Override
@@ -373,37 +360,19 @@ public class HexGridImpl implements HexGrid {
         // TODO: P1.4
         Map<TilePosition, City> unconnectedCities = new HashMap<>();
         Map<TilePosition, City> cities = this.getCities();
-        Map<Set<TilePosition>, Edge> edges = this.getEdges();
+        Map<TilePosition, City> connectedCities = this.getConnectedCities();
 
-        for (Map.Entry<Set<TilePosition>, Edge> entry : edges.entrySet())
+        for (Map.Entry<TilePosition, City> entry : cities.entrySet())
         {
-            Set<Set<TilePosition>> positionsOfEdges = edges.keySet();
-            Edge edge = entry.getValue();
+            TilePosition tilePosition = entry.getKey();
+            City city = entry.getValue();
 
-            for (Map.Entry<TilePosition, City> city : cities.entrySet())
+            if (connectedCities.containsKey(tilePosition)==false)
             {
-                Set<TilePosition> positionsOfCities = cities.keySet();
-                City cityName = city.getValue();
-
-                if (edge.hasRail()==false)
-                {
-                    for (Set<TilePosition> positions : positionsOfEdges)
-                    {
-                        for (TilePosition position : positions)
-                        {
-                            for (TilePosition position2 : positionsOfCities)
-                            {
-                                if (position2.equals(position)==true)
-                                {
-                                    unconnectedCities.put(position2, cityName);
-                                }
-                            }
-                        }
-                    }
-                }
+                unconnectedCities.put(tilePosition, city);
             }
         }
-        return unconnectedCities;
+        return Collections.unmodifiableMap(unconnectedCities);
     }
 
     @Override
