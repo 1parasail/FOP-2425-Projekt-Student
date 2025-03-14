@@ -1,0 +1,96 @@
+[ {
+  "entries" : [ {
+    "player" : "player0",
+    "ai" : false,
+    "timestamp" : "2025-02-04 08:07:07",
+    "score" : 87
+  }, {
+    "player" : "player1",
+    "ai" : false,
+    "timestamp" : "2025-01-18 01:35:39",
+    "score" : 75
+  }, {
+    "player" : "player2",
+    "ai" : true,
+    "timestamp" : "2024-10-14 10:52:33",
+    "score" : 43
+  }, {
+    "player" : "player3",
+    "ai" : true,
+    "timestamp" : "2025-01-05 15:55:44",
+    "score" : 8
+  }, {
+    "player" : "player4",
+    "ai" : true,
+    "timestamp" : "2024-11-04 00:27:13",
+    "score" : 35
+  } ]
+}, {
+  "entries" : [ {
+    "player" : "player0",
+    "ai" : true,
+    "timestamp" : "2024-11-22 21:36:15",
+    "score" : 95
+  } ]
+}, {
+  "entries" : [ {
+    "player" : "player0",
+    "ai" : false,
+    "timestamp" : "2024-10-06 06:08:57",
+    "score" : 3
+  }, {
+    "player" : "player1",
+    "ai" : false,
+    "timestamp" : "2025-01-24 00:56:58",
+    "score" : 21
+  }, {
+    "player" : "player2",
+    "ai" : true,
+    "timestamp" : "2025-03-20 04:19:30",
+    "score" : 20
+  } ]
+}, {
+  "entries" : [ {
+    "player" : "player0",
+    "ai" : true,
+    "timestamp" : "2025-02-28 12:36:43",
+    "score" : 90
+  }, {
+    "player" : "player1",
+    "ai" : true,
+    "timestamp" : "2024-12-04 10:35:13",
+    "score" : 44
+  }, {
+    "player" : "player2",
+    "ai" : false,
+    "timestamp" : "2025-02-10 17:08:39",
+    "score" : 37
+  }, {
+    "player" : "player3",
+    "ai" : false,
+    "timestamp" : "2024-10-25 16:54:17",
+    "score" : 42
+  } ]
+}, {
+  "entries" : [ {
+    "player" : "player0",
+    "ai" : true,
+    "timestamp" : "2024-12-27 10:37:21",
+    "score" : 9
+  }, {
+    "player" : "player1",
+    "ai" : false,
+    "timestamp" : "2025-03-22 14:02:34",
+    "score" : 25
+  }, {
+    "player" : "player2",
+    "ai" : false,
+    "timestamp" : "2025-03-16 05:54:28",
+    "score" : 55
+  }, {
+    "player" : "player3",
+    "ai" : true,
+    "timestamp" : "2025-01-23 01:35:59",
+    "score" : 23
+  } ]
+} ]

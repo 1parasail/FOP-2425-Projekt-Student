@@ -53,7 +53,6 @@ public class LeaderboardController {
     @StudentImplementationRequired("P3.1")
     public static void savePlayerData(String playerName, int score, boolean ai) throws IOException {
         // TODO: P3.1
-        org.tudalgo.algoutils.student.Student.crash("P3.1 - Remove if implemented");
         initializeCsv();
         String zeit = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String a = String.format("%s,%b,%s,%d%n", playerName, ai, zeit, score);
