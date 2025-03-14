@@ -141,28 +141,37 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
 
         boolean added = false;
 
-           if (this.hasRail()==false)
-           {
-               if (player.getHexGrid().getCityAt(this.position1).isStartingCity()==true)
+        if (rails!=null) {
+
+            if (this.hasRail() == false) {
+               if (player.getHexGrid().getCityAt(this.getPosition1())!=null || player.getHexGrid().getCityAt(this.getPosition2())!=null)
                {
-                   added = true;
+                   if (player.getHexGrid().getCityAt(this.getPosition1()).isStartingCity()==true || player.getHexGrid().getCityAt(this.getPosition2()).isStartingCity()==true)
+                   {
+                       added = true;
+                   }
                }
-           }
-           else
-           {
-               Set<Edge> connectedRails = getConnectedRails(player);
-
-               if (this.connectsTo((Edge) connectedRails)==true)
+               else
                {
-                   added = true;
+                   added = false;
                }
-           }
-
-
+            }
+            else {
+                Set<Edge> connectedRails = getConnectedRails(player);
+                for (Edge edge : connectedRails) {
+                    if (this.connectsTo(edge) == true) {
+                        added = true;
+                        break;
+                    }
+                }
+            }
+        }
         if (added == true)
         {
-            Set <TilePosition> position = Collections.singleton(this.getPosition1());
-            rails.put(position, this);
+            Set<TilePosition> positions = new HashSet<>();
+            positions.add(this.getPosition1());
+            positions.add(this.getPosition2());
+            rails.put(positions, this);
         }
 
         return added;
@@ -196,17 +205,22 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public Set<Edge> getConnectedEdges() {
         // TODO: P1.3
-        Tile tile1 = grid().getTileAt(this.getPosition1());
-        Tile tile2 = grid().getTileAt(this.getPosition2());
+        Set<TilePosition> adjacentTilePositions = getAdjacentTilePositions();
+        Set<Edge> connectedEdges = new HashSet<>();
+        for (TilePosition adjacentTilePosition : adjacentTilePositions)
+        {
+            Tile adjacentTile = getHexGrid().getTileAt(adjacentTilePosition);
+            if (adjacentTile!=null) {
+                Set<Edge> edges = adjacentTile.getEdges();
 
-        Set<Edge> edges1 = tile1.getEdges();
-        Set<Edge> edges2 = tile2.getEdges();
+                for (Edge edge : edges) {
+                    if (this.connectsTo(edge) == true) {
+                        connectedEdges.add(edge);
+                    }
+                }
+            }
+        }
 
-        Set<Edge> res1 = edges1.stream().filter(edge -> edges2.contains(edge)==false).collect(Collectors.toSet());
-        Set<Edge> res2 = edges2.stream().filter(edge -> edges1.contains(edge)==false).collect(Collectors.toSet());
-
-        res1.addAll(res2);
-
-        return res1;
+        return connectedEdges;
     }
 }

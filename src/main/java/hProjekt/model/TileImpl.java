@@ -56,21 +56,23 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Edge getEdge(final EdgeDirection direction) {
         // TODO: P1.4
-        Set<Edge> edgesOfThis = this.getEdges();
-        Edge edge = null;
-
-        for (Edge e : edgesOfThis)
+        Tile neighbour = getNeighbour(direction);
+        if (neighbour==null)
         {
-            if (e.equals(direction)==true)
-            {
-                edge = e;
-            }
+             return null;
         }
+        else {
+            Set<Edge> edgesOfNeighbour = neighbour.getEdges();
+            Set<Edge> edgesOfTile = this.getEdges();
+            Edge neighbourEdge = null;
 
-        return edge;
-
-
-
+            for (Edge edge : edgesOfTile) {
+                if (edgesOfNeighbour.contains(edge) == true) {
+                    neighbourEdge = edge;
+                }
+            }
+            return neighbourEdge;
+        }
     }
 
     @Override
@@ -100,24 +102,32 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Tile getNeighbour(final EdgeDirection direction) {
         // TODO: P1.4
-        Set<Edge> edges = this.getEdges();
-        Set<TilePosition> tiles = new HashSet<>();
-
-        for (Edge edge : edges)
-        {
-            if (edge.equals(direction)==true)
-            {
-                tiles.addAll(edge.getAdjacentTilePositions());
-            }
-        }
         Tile neighbour = null;
+        TilePosition position = this.getPosition();
 
-        for (TilePosition tile : tiles)
+        if (direction.equals(EdgeDirection.EAST)==true)
         {
-            if(tile.equals(this.getPosition())==false)
-            {
-               neighbour = hexGrid.getTileAt(tile);
-            }
+            neighbour = getHexGrid().getTileAt(position.q()+1, position().r());
+;       }
+        else if (direction.equals(EdgeDirection.NORTH_EAST)==true)
+        {
+            neighbour = getHexGrid().getTileAt(position.q()+1, position().r()-1);
+        }
+        else if (direction.equals(EdgeDirection.NORTH_WEST)==true)
+        {
+            neighbour = getHexGrid().getTileAt(position.q(), position().r()-1);
+        }
+        else if (direction.equals(EdgeDirection.WEST)==true)
+        {
+            neighbour = getHexGrid().getTileAt(position.q()-1, position().r());
+        }
+        else if (direction.equals(EdgeDirection.SOUTH_WEST)==true)
+        {
+            neighbour = getHexGrid().getTileAt(position.q()-1, position().r()+1);
+        }
+        else
+        {
+            neighbour = getHexGrid().getTileAt(position.q(), position().r()+1);
         }
 
         return neighbour;
@@ -132,21 +142,24 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Set<Tile> getConnectedNeighbours(Set<Edge> connectingEdges) {
         // TODO: P1.4
-       Set<Tile> tiles = new HashSet<>();
-       Set<TilePosition> tilesPositions = new HashSet<>();
+       Set<Tile> connectedNeighbours = new HashSet<>();
 
        for (Edge edge : connectingEdges)
        {
-           tilesPositions.addAll(edge.getAdjacentTilePositions());
-           tilesPositions.remove(this.getPosition());
+           Set<TilePosition> adjacentTilePositions = edge.getAdjacentTilePositions();
+
+           for (TilePosition adjacentTilePosition : adjacentTilePositions)
+           {
+               Tile neighbour = getHexGrid().getTileAt(adjacentTilePosition);
+
+               if (neighbour!=null && neighbour.equals(this)==false)
+               {
+                   connectedNeighbours.add(neighbour);
+               }
+           }
        }
 
-       for (TilePosition tile : tilesPositions)
-       {
-           tiles.add(hexGrid.getTileAt(tile));
-       }
-
-       return tiles;
+       return connectedNeighbours;
     }
 
     @Override
