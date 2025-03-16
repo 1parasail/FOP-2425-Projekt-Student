@@ -186,7 +186,7 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public boolean connectsTo(Edge other) {
         // TODO: P1.3
-       if (this.getPosition1().equals(other.getPosition1())==true || this.getPosition2().equals(other.getPosition2())==true)
+       if (this.getPosition1().equals(other.getPosition1())==true || this.getPosition2().equals(other.getPosition2())==true || this.getPosition1().equals(other.getPosition2())==true || this.getPosition2().equals(other.getPosition1())==true  )
        {
            return true;
        }
@@ -205,21 +205,17 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     @StudentImplementationRequired("P1.3")
     public Set<Edge> getConnectedEdges() {
         // TODO: P1.3
-        Set<TilePosition> adjacentTilePositions = getAdjacentTilePositions();
         Set<Edge> connectedEdges = new HashSet<>();
-        for (TilePosition adjacentTilePosition : adjacentTilePositions)
-        {
-            Tile adjacentTile = getHexGrid().getTileAt(adjacentTilePosition);
-            if (adjacentTile!=null) {
-                Set<Edge> edges = adjacentTile.getEdges();
+        Map<Set<TilePosition>, Edge> alledges = getHexGrid().getEdges();
 
-                for (Edge edge : edges) {
-                    if (this.connectsTo(edge) == true) {
-                        connectedEdges.add(edge);
-                    }
-                }
+        for (Edge edge : alledges.values())
+        {
+            if(this.connectsTo(edge) == true)
+            {
+                connectedEdges.add(edge);
             }
         }
+
 
         return connectedEdges;
     }

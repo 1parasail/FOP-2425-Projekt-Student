@@ -56,24 +56,33 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Edge getEdge(final EdgeDirection direction) {
         // TODO: P1.4
-        Tile neighbour = getNeighbour(direction);
-        if (neighbour==null)
+
+        if (direction instanceof EdgeDirection == false)
         {
-             return null;
+            return null;
+        }
+
+        Tile neighbour = this.getNeighbour(direction);
+        if (neighbour == null)
+        {
+            return null;
         }
         else {
             Set<Edge> edgesOfNeighbour = neighbour.getEdges();
             Set<Edge> edgesOfTile = this.getEdges();
-            Edge neighbourEdge = null;
 
+            Edge neighbourEdge = null;
             for (Edge edge : edgesOfTile) {
-                if (edgesOfNeighbour.contains(edge) == true) {
+                if (edgesOfNeighbour.contains(edge) == true ) {
                     neighbourEdge = edge;
                 }
             }
+
             return neighbourEdge;
         }
     }
+
+
 
     @Override
     public boolean hasCity() {
@@ -102,35 +111,35 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     @StudentImplementationRequired("P1.4")
     public Tile getNeighbour(final EdgeDirection direction) {
         // TODO: P1.4
-        Tile neighbour = null;
-        TilePosition position = this.getPosition();
 
         if (direction.equals(EdgeDirection.EAST)==true)
         {
-            neighbour = getHexGrid().getTileAt(position.q()+1, position().r());
-;       }
+             return this.getHexGrid().getTileAt(this.position.q()+1, this.position().r());
+        }
         else if (direction.equals(EdgeDirection.NORTH_EAST)==true)
         {
-            neighbour = getHexGrid().getTileAt(position.q()+1, position().r()-1);
+            return this.getHexGrid().getTileAt(this.position.q()+1, this.position().r()-1);
         }
         else if (direction.equals(EdgeDirection.NORTH_WEST)==true)
         {
-            neighbour = getHexGrid().getTileAt(position.q(), position().r()-1);
+            return this.getHexGrid().getTileAt(this.position.q(), this.position().r()-1);
         }
         else if (direction.equals(EdgeDirection.WEST)==true)
         {
-            neighbour = getHexGrid().getTileAt(position.q()-1, position().r());
+            return this.getHexGrid().getTileAt(this.position.q()-1, this.position().r());
         }
         else if (direction.equals(EdgeDirection.SOUTH_WEST)==true)
         {
-            neighbour = getHexGrid().getTileAt(position.q()-1, position().r()+1);
+            return  this.getHexGrid().getTileAt(this.position.q()-1, this.position().r()+1);
+        }
+        else if (direction.equals(EdgeDirection.SOUTH_EAST)==true)
+        {
+            return this.getHexGrid().getTileAt(this.position.q(), this.position().r()+1);
         }
         else
         {
-            neighbour = getHexGrid().getTileAt(position.q(), position().r()+1);
+            return null;
         }
-
-        return neighbour;
     }
 
     @Override
