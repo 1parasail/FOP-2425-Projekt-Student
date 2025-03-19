@@ -374,15 +374,13 @@ public class GameController {
             playerController.resetDrivingPhase();
             getState().setPlayerPositon(player, getStartingCity().getPosition());
 
-            if (playerController.getPlayerObjective().equals(PlayerObjective.CHOOSE_PATH)==false)
-            {
-                playerController.setPlayerObjective(PlayerObjective.CHOOSE_PATH);
+            playerController.waitForNextAction(PlayerObjective.CHOOSE_PATH);
+            playerController.setPlayerObjective(PlayerObjective.CHOOSE_PATH);
+            playerController.waitForNextAction(PlayerObjective.CONFIRM_PATH);
+            playerController.setPlayerObjective(PlayerObjective.CONFIRM_PATH);
 
-                if (playerController.getPlayerObjective().equals(PlayerObjective.CONFIRM_PATH)==false)
-                {
-                    playerController.setPlayerObjective(PlayerObjective.CONFIRM_PATH);
-                }
-            }
+
+
         }
     }
 

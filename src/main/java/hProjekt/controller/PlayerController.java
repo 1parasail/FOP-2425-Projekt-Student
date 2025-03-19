@@ -308,29 +308,23 @@ public class PlayerController {
     @StudentImplementationRequired("P2.1")
     public boolean canBuildRail(Edge edge) {
         // TODO: P2.1
-        if (edge.hasRail()==true)
-        {
+        if (edge.getRailOwners().contains(player)) {
             return false;
         }
 
-        if (edge.getBaseBuildingCost() <= player.getCredits())
-        {
-            Map<Player, Integer> parallelCost = edge.getParallelCostPerPlayer(player);
-            int valueOfParallelCost = parallelCost.get(player);
+        int baseCost = edge.getBaseBuildingCost();
+        int playerCredits = player.getCredits();
 
-            if (valueOfParallelCost <= player.getCredits() || valueOfParallelCost+edge.getBaseBuildingCost()<= player.getCredits())
-            {
+        if (baseCost <= playerCredits) {
+            Map<Player, Integer> parallelCost = edge.getParallelCostPerPlayer(player);
+            int valueOfParallelCost = parallelCost.getOrDefault(player, 0); // Если `null`, то 0
+
+            if ((this.getState().getGamePhaseProperty().getValue().equals(GamePhase.BUILDING_PHASE)==true && valueOfParallelCost <= playerCredits) || (valueOfParallelCost + baseCost) <= playerCredits) {
                 return true;
             }
-            else
-            {
-                return false;
-            }
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     /**
@@ -343,18 +337,19 @@ public class PlayerController {
         // TODO: P2.1
        Set<Edge> buildableRails = new HashSet<>();
 
-       Map<Set<TilePosition>, Edge> railsOfPlayer = this.player.getRails();
+       Map<Set<TilePosition>, Edge> railsOfPlayer = player.getRails();
 
-       if (railsOfPlayer == null)
+        Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
+
+       if (railsOfPlayer.isEmpty() == true)
        {
            Map<TilePosition, City> startingCities = getState().getGrid().getStartingCities();
-           Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
 
            for (TilePosition position : startingCities.keySet())
            {
                for (Edge edge : edges.values())
                {
-                   if(getState().getGrid().getEdge(position, position).connectsTo(edge)==true)
+                   if((edge.getPosition1().equals(position) || edge.getPosition2().equals(position)) && canBuildRail(edge)==true)
                    {
                        buildableRails.add(edge);
                    }
@@ -363,15 +358,13 @@ public class PlayerController {
        }
        else
        {
-           Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
-
-           for (Edge edge : railsOfPlayer.values())
+           for (Edge playerEdge : railsOfPlayer.values())
            {
-               for (Edge edge1 : edges.values())
+               for (Edge edge : edges.values())
                {
-                   if (edge1.connectsTo(edge)==true)
+                   if (edge.connectsTo(playerEdge) && canBuildRail(edge)==true)
                    {
-                       buildableRails.add(edge1);
+                       buildableRails.add(edge);
                    }
                }
            }
@@ -389,55 +382,57 @@ public class PlayerController {
      *                                edge
      */
     @StudentImplementationRequired("P2.2")
-    public void buildRail(final Edge edge) throws IllegalActionException {
+    public void buildRail(final Edge edge) throws IllegalActionException
+    {
         // TODO: P2.2
-       if (canBuildRail(edge)==false)
-       {
-           throw new IllegalActionException("Error! Can't build Rail");
-       }
 
-       if (edge.hasRail()==true)
-       {
-           List<Player> owners = edge.getRailOwners();
+        if (canBuildRail(edge)==false || getBuildableRails().contains(edge)==false)
+        {
+            throw new IllegalActionException("Can't build Rail for edge " + edge);
+        }
 
-           for (Player player : owners)
-           {
-               if (this.player.equals(player) == false)
-               {
-                   int cost = edge.getTotalParallelCost(this.player);
-                   player.addCredits(cost);
-                   this.player.removeCredits(cost+ edge.getBaseBuildingCost());
-               }
-           }
+        Map<Player, Integer> parallelCost = edge.getParallelCostPerPlayer(player);
+        int totalParallelCost = parallelCost.getOrDefault(player, 0);
 
-           edge.addRail(this.player);
-       }
-       else
-       {
-           edge.addRail(this.player);
+        if (edge.hasRail()==true && edge.getRailOwners().contains(player)==false)
+        {
 
-           Map<TilePosition, City> cities = getState().getGrid().getCities();
+            for (int i = 0; i < edge.getRailOwners().size(); i++)
+            {
+                if (edge.getRailOwners().get(i).equals(player)==false)
+                {
+                    edge.getRailOwners().get(i).addCredits(totalParallelCost);
+                }
+            }
+        }
 
-           for (Map.Entry<TilePosition, City> entry : cities.entrySet())
-           {
-               TilePosition position = entry.getKey();
-               City city = entry.getValue();
+        player.removeCredits(edge.getBaseBuildingCost());
 
-               Set<TilePosition> adjacentTilePositions = edge.getAdjacentTilePositions();
+        if (getState().getGamePhaseProperty().getValue().equals(GamePhase.BUILDING_PHASE)==true)
+        {
+            player.removeCredits(totalParallelCost);
+        }
+        else
+        {
+            player.removeCredits(edge.getBaseBuildingCost()+totalParallelCost);
+        }
 
-               for (TilePosition adjacentTilePosition : adjacentTilePositions)
-               {
-                   if (adjacentTilePosition.equals(position)==true)
-                   {
-                       if (city.isStartingCity()==false)
-                       {
-                           this.player.addCredits(Config.CITY_CONNECTION_BONUS);
-                       }
-                   }
-               }
-           }
-       }
+        edge.addRail(player);
+
+        Map<TilePosition, City> cities = getState().getGrid().getCities();
+        Set<TilePosition> adjacentPositions = edge.getAdjacentTilePositions();
+        for (TilePosition pos : adjacentPositions)
+        {
+            City city = cities.get(pos);
+            if (city != null && city.isStartingCity()==false)
+            {
+                player.addCredits(Config.CITY_CONNECTION_BONUS);
+                break;
+            }
+        }
+
     }
+
 
     /**
      * Builds rails on the given edges.
@@ -586,7 +581,8 @@ public class PlayerController {
     @StudentImplementationRequired("P2.5")
     public boolean canDrive() {
         // TODO: P2.5
-        if (getState().equals(GamePhase.DRIVING_PHASE)==true && this.getPlayerState().equals(GamePhase.DRIVING_PHASE)==true)
+
+        if (getState().getGamePhaseProperty().getValue().equals(GamePhase.DRIVING_PHASE)==true && getState().getDrivingPlayers().contains(this.player)==true)
         {
             return true;
         }

@@ -1,9 +1,6 @@
 package hProjekt.model;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
@@ -67,19 +64,17 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
         {
             return null;
         }
-        else {
             Set<Edge> edgesOfNeighbour = neighbour.getEdges();
             Set<Edge> edgesOfTile = this.getEdges();
 
-            Edge neighbourEdge = null;
+            List<Edge> neighbourEdge = new ArrayList<>();
             for (Edge edge : edgesOfTile) {
                 if (edgesOfNeighbour.contains(edge) == true ) {
-                    neighbourEdge = edge;
+                    neighbourEdge.add(edge);
                 }
             }
 
-            return neighbourEdge;
-        }
+            return neighbourEdge.get(0);
     }
 
 
