@@ -53,7 +53,7 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
        {
            Edge edge = entry.getValue();
 
-           if (edge.equals(this)==true)
+           if (this.connectsTo(edge)==true)
            {
                connectedRails.add(edge);
            }
@@ -206,9 +206,9 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
     public Set<Edge> getConnectedEdges() {
         // TODO: P1.3
         Set<Edge> connectedEdges = new HashSet<>();
-        Map<Set<TilePosition>, Edge> alledges = getHexGrid().getEdges();
+        Map<Set<TilePosition>, Edge> allEdges = getHexGrid().getEdges();
 
-        for (Edge edge : alledges.values())
+        for (Edge edge : allEdges.values())
         {
             if(this.connectsTo(edge) == true)
             {
