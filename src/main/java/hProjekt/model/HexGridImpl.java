@@ -379,8 +379,8 @@ public class HexGridImpl implements HexGrid {
     @StudentImplementationRequired("P1.4")
     public Map<TilePosition, City> getStartingCities() {
         // TODO: P1.4
-        Map<TilePosition, City> cities = this.getCities();
         Map<TilePosition, City> startingCities = new HashMap<>();
+        Map<TilePosition, City> cities = this.getCities();
 
         for (Map.Entry<TilePosition, City> entry : cities.entrySet())
         {

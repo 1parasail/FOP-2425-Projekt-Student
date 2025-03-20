@@ -54,27 +54,13 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     public Edge getEdge(final EdgeDirection direction) {
         // TODO: P1.4
 
-        if (direction instanceof EdgeDirection == false)
-        {
-            return null;
-        }
-
         Tile neighbour = this.getNeighbour(direction);
         if (neighbour == null)
         {
             return null;
         }
-            Set<Edge> edgesOfNeighbour = neighbour.getEdges();
-            Set<Edge> edgesOfTile = this.getEdges();
 
-            List<Edge> neighbourEdge = new ArrayList<>();
-            for (Edge edge : edgesOfTile) {
-                if (edgesOfNeighbour.contains(edge) == true ) {
-                    neighbourEdge.add(edge);
-                }
-            }
-
-            return neighbourEdge.get(0);
+        return getHexGrid().getEdge(this.getPosition(), neighbour.getPosition());
     }
 
 
@@ -162,7 +148,6 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
                }
            }
        }
-
        return connectedNeighbours;
     }
 

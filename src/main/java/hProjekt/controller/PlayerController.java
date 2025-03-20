@@ -317,7 +317,7 @@ public class PlayerController {
 
         if (baseCost <= playerCredits) {
             Map<Player, Integer> parallelCost = edge.getParallelCostPerPlayer(player);
-            int valueOfParallelCost = parallelCost.getOrDefault(player, 0); // Если `null`, то 0
+            int valueOfParallelCost = parallelCost.getOrDefault(player, 0);
 
             if ((this.getState().getGamePhaseProperty().getValue().equals(GamePhase.BUILDING_PHASE)==true && valueOfParallelCost <= playerCredits) || (valueOfParallelCost + baseCost) <= playerCredits) {
                 return true;

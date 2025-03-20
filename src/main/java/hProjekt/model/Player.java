@@ -89,4 +89,5 @@ public interface Player {
      * @return all rails of the player
      */
     Map<Set<TilePosition>, Edge> getRails();
+
 }

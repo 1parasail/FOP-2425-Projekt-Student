@@ -141,7 +141,7 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
 
         boolean added = false;
 
-        if (rails!=null) {
+        if (rails.isEmpty()==false) {
 
             if (this.hasRail() == false) {
                if (player.getHexGrid().getCityAt(this.getPosition1())!=null || player.getHexGrid().getCityAt(this.getPosition2())!=null)
@@ -166,14 +166,6 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
                 }
             }
         }
-        if (added == true)
-        {
-            Set<TilePosition> positions = new HashSet<>();
-            positions.add(this.getPosition1());
-            positions.add(this.getPosition2());
-            rails.put(positions, this);
-        }
-
         return added;
     }
 

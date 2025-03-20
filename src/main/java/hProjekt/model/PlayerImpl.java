@@ -120,6 +120,7 @@ public class PlayerImpl implements Player {
         return getHexGrid().getRails(this);
     }
 
+
     /**
      * Builder for {@link PlayerImpl}.
      * Allows to create a new player and modify its properties before building it.
