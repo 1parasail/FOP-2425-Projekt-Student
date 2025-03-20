@@ -85,6 +85,9 @@ public class BetterAiController extends AiController {
         }
     }
 
+    /**
+     * Wählt die beste Schiene, die ins Budget passt, und baut sie.
+     */
     private void buildBestRail() {
         List<Edge> buildableEdges = playerController.getPlayerState().buildableRailEdges().stream().toList();
         if (buildableEdges.isEmpty()) {
@@ -102,6 +105,9 @@ public class BetterAiController extends AiController {
         }
     }
 
+    /**
+     * Wählt das beste Tile für die Bewegung, um effizient zum Ziel zu gelangen.
+     */
     private void driveToTarget() {
         List<Tile> drivableTiles = playerController.getPlayerState().drivableTiles().keySet().stream().toList();
         if (drivableTiles.isEmpty()) {
@@ -124,6 +130,11 @@ public class BetterAiController extends AiController {
         }
     }
 
+    /**
+     * Gibt die Anzahl der Tiles im gespeicherten Fahrpfad zurück.
+     * @param tile Das Ziel-Tile, dessen Pfadlänge berechnet wird
+     * @return Die Menge von Tiles, die durchgegangen müssen werden.
+     */
     private int getPathLengthToTarget(Tile tile) {
         List<Tile> path = playerController.getPlayerState().drivableTiles().get(tile);
         return (path != null) ? path.size() : Integer.MAX_VALUE; // Falls kein Pfad existiert, sehr hoher Wert
