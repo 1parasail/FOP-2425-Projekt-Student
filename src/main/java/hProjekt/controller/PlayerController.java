@@ -308,6 +308,7 @@ public class PlayerController {
     @StudentImplementationRequired("P2.1")
     public boolean canBuildRail(Edge edge) {
         // TODO: P2.1
+
         if (edge.getRailOwners().contains(player)) {
             return false;
         }
@@ -339,7 +340,7 @@ public class PlayerController {
 
        Map<Set<TilePosition>, Edge> railsOfPlayer = player.getRails();
 
-        Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
+       Map<Set<TilePosition>,Edge> edges = getState().getGrid().getEdges();
 
        if (railsOfPlayer.isEmpty() == true)
        {
@@ -362,7 +363,7 @@ public class PlayerController {
            {
                for (Edge edge : edges.values())
                {
-                   if (edge.connectsTo(playerEdge) && canBuildRail(edge)==true)
+                   if (edge.connectsTo(playerEdge)== true && canBuildRail(edge)==true)
                    {
                        buildableRails.add(edge);
                    }
@@ -406,7 +407,7 @@ public class PlayerController {
             }
         }
 
-        player.removeCredits(edge.getBaseBuildingCost());
+        this.setBuildingBudget(getBuildingBudget() - edge.getBaseBuildingCost());
 
         if (getState().getGamePhaseProperty().getValue().equals(GamePhase.BUILDING_PHASE)==true)
         {
@@ -430,6 +431,7 @@ public class PlayerController {
                 break;
             }
         }
+
 
     }
 

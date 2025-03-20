@@ -253,42 +253,44 @@ public class GameController {
     @StudentImplementationRequired("P2.3")
     private void executeBuildingPhase() {
         // TODO: P2.3
-        Map<TilePosition, City> unconnectedCities = getState().getGrid().getUnconnectedCities();
 
-        int countOfUnconnectedCities = unconnectedCities.values().size();
+        int countOfUnconnectedCities = getState().getGrid().getUnconnectedCities().size();
 
         while (countOfUnconnectedCities >= Config.UNCONNECTED_CITIES_START_THRESHOLD)
         {
-            int countOfRounds = roundCounter.get();
-            roundCounter.set(countOfRounds+1);
+            roundCounter.set(roundCounter.get()+1);
 
             int indexOfPlayer = (roundCounter.get()-1) % state.getPlayers().size();
 
             Player playerOfRound = state.getPlayers().get(indexOfPlayer);
 
-            PlayerController playerControllerOfRound = new PlayerController(this, playerOfRound);
+            PlayerController playerControllerOfPlayerOfRound = getPlayerControllers().get(playerOfRound);
 
-            playerControllerOfRound.setPlayerObjective(PlayerObjective.ROLL_DICE);
+            playerControllerOfPlayerOfRound.setPlayerObjective(PlayerObjective.ROLL_DICE);
 
             int resOfDice = castDice();
 
-            playerControllerOfRound.setBuildingBudget(resOfDice+playerOfRound.getCredits());
-
-            Set<Edge> buildableRails = playerControllerOfRound.getBuildableRails();
-
-            for (Edge buildableRail : buildableRails)
+            for (PlayerController playerController : getPlayerControllers().values())
             {
-                try
-                {
-                    playerControllerOfRound.buildRail(buildableRail);
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException("Could not build rail " + buildableRail);
-                }
-            }
+                playerController.setBuildingBudget(resOfDice);
+                waitForBuild(playerController);
 
-            waitForBuild(playerControllerOfRound);
+                Set<Edge> buildableRails = playerControllerOfPlayerOfRound.getBuildableRails();
+
+                for (Edge buildableRail : buildableRails)
+                {
+                    try
+                    {
+                        playerControllerOfPlayerOfRound.buildRail(buildableRail);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new RuntimeException("Could not build rail " + buildableRail);
+                    }
+                }
+
+            }
+            countOfUnconnectedCities = getState().getGrid().getUnconnectedCities().size();
         }
     }
 
@@ -300,46 +302,31 @@ public class GameController {
     @StudentImplementationRequired("P2.4")
     public void chooseCities() {
         // TODO: P2.4
-        Map<TilePosition, City> cities = getState().getGrid().getCities();
-
-        Map<TilePosition, City> startCity = new HashMap<>();
-        Map<TilePosition, City> finishCity = new HashMap<>();
 
 
-        int randomForStartCity = Config.RANDOM.nextInt(cities.size());
-        startCity.put((TilePosition) cities.keySet().toArray()[randomForStartCity], (City) cities.values().toArray()[randomForStartCity]);
+            Map<TilePosition, City> cities = getState().getGrid().getCities();
 
-        int randomForFinishtCity = Config.RANDOM.nextInt(cities.size());
-        finishCity.put((TilePosition) cities.keySet().toArray()[randomForFinishtCity], (City) cities.values().toArray()[randomForFinishtCity]);
+            List<TilePosition> cityPositions = new ArrayList<>(cities.keySet());
 
-        if (startCity.keySet().contains(finishCity.keySet())==true)
-        {
-            while (startCity.keySet().contains(finishCity.keySet())==false)
-            {
-                int anotherRandomForFinishtCity = Config.RANDOM.nextInt(cities.size());
-                finishCity.put((TilePosition) cities.keySet().toArray()[anotherRandomForFinishtCity], (City) cities.values().toArray()[anotherRandomForFinishtCity]);
+            int randomStartCity = Config.RANDOM.nextInt(cityPositions.size());
+            City startCity = cities.get(cityPositions.get(randomStartCity));
+
+            int randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
+            City finishCity = cities.get(cityPositions.get(randomForFinishCity));
+
+            if (finishCity.equals(startCity) == true) {
+                while (finishCity.equals(startCity) == true) {
+                    randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
+                    finishCity = cities.get(cityPositions.get(randomForFinishCity));
+                }
             }
+
+            getState().addChosenCity(startCity);
+            getState().addChosenCity(finishCity);
+
+            chosenCitiesProperty = new SimpleObjectProperty<>(new Pair<>(startCity, finishCity));
         }
 
-        for (City city : startCity.values())
-        {
-            getState().addChosenCity(city);
-        }
-
-        for (City city : finishCity.values())
-        {
-            getState().addChosenCity(city);
-        }
-
-        for (City city : startCity.values())
-        {
-            for (City city1 : finishCity.values())
-            {
-                Pair<City, City> cityPair = new Pair<>(city, city1);
-                chosenCitiesProperty = (Property<Pair<City, City>>) cityPair;
-            }
-        }
-    }
 
     /**
      * Let the players build during the driving phase.
