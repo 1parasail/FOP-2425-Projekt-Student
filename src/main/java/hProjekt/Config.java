@@ -12,6 +12,7 @@ import java.util.Set;
 
 import hProjekt.controller.AiController;
 import hProjekt.controller.BasicAiController;
+import hProjekt.controller.BetterAiController;
 import hProjekt.model.Tile;
 import javafx.util.Pair;
 
@@ -141,7 +142,7 @@ public class Config {
     /**
      * A set of AI controllers that are available for the game.
      */
-    public static final Set<Class<? extends AiController>> AVAILABLE_AI_CONTROLLER = Set.of(BasicAiController.class);
+    public static final Set<Class<? extends AiController>> AVAILABLE_AI_CONTROLLER = Set.of(BasicAiController.class, BetterAiController.class);
 
     /**
      * A list of town names to train the name generator on.
