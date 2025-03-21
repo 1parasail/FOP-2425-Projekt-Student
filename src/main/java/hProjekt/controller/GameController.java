@@ -256,42 +256,37 @@ public class GameController {
 
         int countOfUnconnectedCities = getState().getGrid().getUnconnectedCities().size();
 
-        while (countOfUnconnectedCities >= Config.UNCONNECTED_CITIES_START_THRESHOLD)
-        {
-            roundCounter.set(roundCounter.get()+1);
 
-            int indexOfPlayer = (roundCounter.get()-1) % state.getPlayers().size();
+            if (countOfUnconnectedCities >= Config.UNCONNECTED_CITIES_START_THRESHOLD) {
+                roundCounter.set(roundCounter.get() + 1);
 
-            Player playerOfRound = state.getPlayers().get(indexOfPlayer);
+                int indexOfPlayer = (roundCounter.get() - 1) % state.getPlayers().size();
 
-            PlayerController playerControllerOfPlayerOfRound = getPlayerControllers().get(playerOfRound);
+                Player playerOfRound = state.getPlayers().get(indexOfPlayer);
 
-            playerControllerOfPlayerOfRound.setPlayerObjective(PlayerObjective.ROLL_DICE);
+                PlayerController playerControllerOfPlayerOfRound = getPlayerControllers().get(playerOfRound);
 
-            int resOfDice = castDice();
+                playerControllerOfPlayerOfRound.setPlayerObjective(PlayerObjective.ROLL_DICE);
 
-            for (PlayerController playerController : getPlayerControllers().values())
-            {
-                playerController.setBuildingBudget(resOfDice);
-                waitForBuild(playerController);
+                int resOfDice = castDice();
 
-                Set<Edge> buildableRails = playerControllerOfPlayerOfRound.getBuildableRails();
+                for (PlayerController playerController : getPlayerControllers().values()) {
+                    playerController.setBuildingBudget(resOfDice);
+                    waitForBuild(playerController);
 
-                for (Edge buildableRail : buildableRails)
-                {
-                    try
-                    {
-                        playerControllerOfPlayerOfRound.buildRail(buildableRail);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new RuntimeException("Could not build rail " + buildableRail);
+                    Set<Edge> buildableRails = playerController.getBuildableRails();
+
+                    for (Edge buildableRail : buildableRails) {
+                        try {
+                            playerController.buildRail(buildableRail);
+                            countOfUnconnectedCities = getState().getGrid().getUnconnectedCities().size();
+                        } catch (Exception e) {
+                            throw new RuntimeException("Could not build rail " + buildableRail);
+                        }
                     }
                 }
-
             }
-            countOfUnconnectedCities = getState().getGrid().getUnconnectedCities().size();
-        }
+
     }
 
     /**
@@ -302,24 +297,27 @@ public class GameController {
     @StudentImplementationRequired("P2.4")
     public void chooseCities() {
         // TODO: P2.4
+           Map<TilePosition, City> cities = getState().getGrid().getCities();
+           Set<City> chosenCities = getState().getChosenCities();
 
 
-            Map<TilePosition, City> cities = getState().getGrid().getCities();
+            List<TilePosition> availableCityPositions = cities.keySet().stream()
+            .filter(pos -> chosenCities.contains(cities.get(pos))==false)
+            .collect(Collectors.toList());
 
-            if (cities.size() >= 2) {
+            if (availableCityPositions.size() >= 2) {
 
-                List<TilePosition> cityPositions = new ArrayList<>(cities.keySet());
 
-                int randomStartCity = Config.RANDOM.nextInt(cityPositions.size());
-                City startCity = cities.get(cityPositions.get(randomStartCity));
+                int randomStartCity = Config.RANDOM.nextInt(availableCityPositions.size());
+                City startCity = cities.get(availableCityPositions.get(randomStartCity));
 
-                int randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
-                City finishCity = cities.get(cityPositions.get(randomForFinishCity));
+                int randomForFinishCity = Config.RANDOM.nextInt(availableCityPositions.size());
+                City finishCity = cities.get(availableCityPositions.get(randomForFinishCity));
 
                 if (finishCity.equals(startCity) == true) {
                     while (finishCity.equals(startCity) == true) {
-                        randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
-                        finishCity = cities.get(cityPositions.get(randomForFinishCity));
+                        randomForFinishCity = Config.RANDOM.nextInt(availableCityPositions.size());
+                        finishCity = cities.get(availableCityPositions.get(randomForFinishCity));
                     }
                 }
 
@@ -354,24 +352,19 @@ public class GameController {
     @StudentImplementationRequired("P2.6")
     private void letPlayersChoosePath() {
         // TODO: P2.6
-        Map<Player, PlayerController> playerControllers = getPlayerControllers();
 
-        for (Map.Entry<Player, PlayerController> entry : playerControllers.entrySet())
-        {
-            PlayerController playerController = entry.getValue();
-            Player player = entry.getKey();
+            PlayerController playerController = getActivePlayerController();
+            Player player = playerController.getPlayer();
 
             playerController.resetDrivingPhase();
             getState().setPlayerPositon(player, getStartingCity().getPosition());
 
             playerController.waitForNextAction(PlayerObjective.CHOOSE_PATH);
-            playerController.setPlayerObjective(PlayerObjective.CHOOSE_PATH);
-            playerController.waitForNextAction(PlayerObjective.CONFIRM_PATH);
-            playerController.setPlayerObjective(PlayerObjective.CONFIRM_PATH);
+            if (playerController.hasConfirmedPath()==false)
+            {
+                playerController.waitForNextAction(PlayerObjective.CONFIRM_PATH);
+            }
 
-
-
-        }
     }
 
     /**
@@ -469,46 +462,18 @@ public class GameController {
     @StudentImplementationRequired("P2.8")
     private List<Player> getWinners() {
         // TODO: P2.8
-        List<Player> drivingPlayers = getState().getDrivingPlayers();
-        Map<Player, TilePosition> positionMap = getState().getPlayerPositions();
-        List<Player> winners = new ArrayList<>();
+        Map<Player, TilePosition> positions = getState().getPlayerPositions();
+        Map<Player, Integer> surplus = getState().getPlayerPointSurplus();
+        TilePosition targetPosition = getTargetCity().getPosition();
 
-        for (Map.Entry<Player, TilePosition> entry : positionMap.entrySet())
-        {
-            Player player = entry.getKey();
-            TilePosition position = entry.getValue();
 
-            for (int i = 0; i < drivingPlayers.size(); i++)
-            {
-                if (player.equals(drivingPlayers.get(i))==true)
-                {
-                    if(position.equals(getTargetCity().getPosition())==true)
-                    {
-                        winners.add(player);
-                    }
-                }
-            }
-        }
+        List<Player> winners = positions.entrySet().stream()
+            .filter(entry -> entry.getValue().equals(targetPosition))
+            .map(Map.Entry::getKey)
+            .sorted((player1, player2) -> Integer.compare(surplus.getOrDefault(player2, 0), surplus.getOrDefault(player1, 0)))
+            .limit(Config.WINNING_CREDITS.size())
+            .collect(Collectors.toList());
 
-        int difference = winners.size() - Config.WINNING_CREDITS.size();
-
-        for (int i = 0; i < difference; i++)
-        {
-            winners.remove(winners.size()-1);
-        }
-
-        Map<Player, Integer> playersPointSurplus = getState().getPlayerPointSurplus();
-        Map<Player, Integer> sortedPlayersPointSurplus = (Map<Player, Integer>) playersPointSurplus.entrySet().stream().sorted((point1, point2) -> Integer.compare(point2.getValue(), point1.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (point1, point2)->point1));
-
-        for (Map.Entry<Player, Integer> entry : sortedPlayersPointSurplus.entrySet())
-        {
-            Player player = entry.getKey();
-
-            for (int i = 0; i < winners.size(); i++)
-            {
-                winners.set(i,player);
-            }
-        }
         return winners;
     }
 
