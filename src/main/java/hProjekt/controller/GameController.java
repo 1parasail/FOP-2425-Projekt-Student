@@ -590,4 +590,12 @@ public class GameController {
         pc.setPlayerObjective(PlayerObjective.IDLE);
         activePlayerController.setValue(null);
     }
+
+    @Override
+    public String toString() {
+        return "GameController[" + "state=" + state + ", playerControllers=" + playerControllers + ", dice=" + dice
+                + ", currentDiceRoll=" + currentDiceRoll + ", roundCounter=" + roundCounter + ", chosenCitiesProperty="
+                + chosenCitiesProperty + ", activePlayerController=" + activePlayerController + ", stopped=" + stopped
+                + ']';
+    }
 }

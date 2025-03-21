@@ -293,6 +293,12 @@ public final class GameState {
     public String toString() {
         return "GameState[" +
                 "grid=" + grid + ", " +
-                "players=" + players + ']';
+                "players=" + players + ", " +
+                "drivingPlayers=" + drivingPlayers + ", " +
+                "playerPositions=" + playerPositions + ", " +
+                "playerPointSurplus=" + playerPointSurplus + ", " +
+                "winnerProperty=" + winnerProperty + ", " +
+                "gamePhaseProperty=" + gamePhaseProperty + ", " +
+                "chosenCities=" + chosenCities + ']';
     }
 }

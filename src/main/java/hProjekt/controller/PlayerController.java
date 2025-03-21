@@ -712,4 +712,11 @@ public class PlayerController {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "PlayerController[" + "player=" + player + ", playerStateProperty=" + playerStateProperty
+                + ", playerObjective=" + playerObjective + ", buildingBudget=" + buildingBudget + ", rentedEdges="
+                + rentedEdges + ", hasPath=" + hasPath + ", hasConfirmedPath=" + hasConfirmedPath + "]";
+    }
 }

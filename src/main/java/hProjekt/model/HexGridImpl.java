@@ -438,4 +438,10 @@ public class HexGridImpl implements HexGrid {
         }
         return pathEdges.reversed();
     }
+
+    @Override
+    public String toString() {
+        return "HexGridImpl [tiles=" + tiles + ", edges=" + edges + ", cities=" + cities + ", tileWidth=" + tileWidth
+                + ", tileHeight=" + tileHeight + ", tileSize=" + tileSize + "]";
+    }
 }

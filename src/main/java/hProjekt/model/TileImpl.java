@@ -155,4 +155,12 @@ public record TileImpl(TilePosition position, Type type, ObservableDoubleValue h
     public Set<Edge> getRails(Player player) {
         return getEdges().stream().filter(edge -> edge.getRailOwners().contains(player)).collect(Collectors.toSet());
     }
+
+    @Override
+    public String toString() {
+        return "TileImpl[" +
+                "position=" + position +
+                ", type=" + type +
+                "]";
+    }
 }

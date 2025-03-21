@@ -1,30 +1,29 @@
 package hProjekt.controller;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import hProjekt.Config;
-import hProjekt.Project_TestP;
-import hProjekt.mocking.MockConverterP;
-import hProjekt.mocking.ReflectionUtilsP;
-import hProjekt.mocking.StudentMethodCall;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.sourcegrade.jagr.api.rubric.TestForSubmission;
-import org.tudalgo.algoutils.tutor.general.assertions.Assertions2;
-import org.tudalgo.algoutils.tutor.general.assertions.Context;
-
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Stream;
-
 import static hProjekt.Project_TestP.assertContainsAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.tudalgo.algoutils.tutor.general.assertions.Assertions2.assertEquals;
-import static org.tudalgo.algoutils.tutor.general.assertions.Assertions2.assertNotNull;
 import static org.tudalgo.algoutils.tutor.general.assertions.Assertions2.assertTrue;
 import static org.tudalgo.algoutils.tutor.general.assertions.Assertions2.contextBuilder;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.sourcegrade.jagr.api.rubric.TestForSubmission;
+import org.tudalgo.algoutils.tutor.general.assertions.Context;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import hProjekt.Config;
+import hProjekt.Project_TestP;
+import hProjekt.mocking.MockConverterP;
+import hProjekt.mocking.ReflectionUtilsP;
+import hProjekt.mocking.StudentMethodCall;
 
 @TestForSubmission
 public class GameControllerTest {
@@ -41,29 +40,38 @@ public class GameControllerTest {
             ReflectionUtilsP.getUnsafe().throwException(results.getLast().exception);
         }
 
-
         Throwable lastCall = null;
-        for (StudentMethodCall actual: results) {
+        for (StudentMethodCall actual : results) {
             if (actual.call == null) {
                 lastCall = actual.exception;
                 continue;
             }
             try {
                 Context context = contextBuilder()
-                    .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
-                    .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
-                    .add("actual", actual.invoked).add(
-                        "expected", expected)
-                    .build();
+                        .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
+                        .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
+                        .add("actual", actual.invoked).add(
+                                "expected", expected)
+                        .build();
 
-                assertTrue(actual.invoked instanceof GameController, context, r -> "chooseCities() did not return a object of the correct Type!");
+                assertTrue(actual.invoked instanceof GameController, context,
+                        r -> "chooseCities() did not return a object of the correct Type!");
+
+                Context context_2 = contextBuilder()
+                        .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
+                        .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
+                        .add("actual", ReflectionUtilsP.getFieldValue(actual.invoked,
+                                "chosenCitiesProperty"))
+                        .add(
+                                "expected", ReflectionUtilsP.getFieldValue(expected,
+                                        "chosenCitiesProperty"))
+                        .build();
+
                 assertTrue(
-                    ReflectionUtilsP.equalsForMocks(
-                        ReflectionUtilsP.getFieldValue(expected, "chosenCitiesProperty"),
-                        ReflectionUtilsP.getFieldValue(actual.invoked, "chosenCitiesProperty")),
-
-                    context, r ->
-                        "");
+                        ReflectionUtilsP.equalsForMocks(
+                                ReflectionUtilsP.getFieldValue(expected, "chosenCitiesProperty"),
+                                ReflectionUtilsP.getFieldValue(actual.invoked, "chosenCitiesProperty")),
+                        context_2, r -> "chooseCities() did not set chosenCitiesProperty correctly!");
                 return;
             } catch (Throwable e) {
                 lastCall = e;
@@ -75,7 +83,6 @@ public class GameControllerTest {
     private static Stream<Arguments> provideChooseCities() {
         return Project_TestP.parseJsonFile("hProjekt/controller/GameController_chooseCities.json");
     }
-
 
     @ParameterizedTest
     @MethodSource("provideExecuteBuildingPhase")
@@ -89,26 +96,29 @@ public class GameControllerTest {
             ReflectionUtilsP.getUnsafe().throwException(results.getLast().exception);
         }
 
-
         Throwable lastCall = null;
-        for (StudentMethodCall actual: results) {
+        for (StudentMethodCall actual : results) {
             if (actual.call == null) {
                 lastCall = actual.exception;
                 continue;
             }
             try {
                 Context context = contextBuilder()
-                    .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
-                    .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
-                    .build();
+                        .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
+                        .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
+                        .build();
 
-                assertTrue(actual.invoked instanceof GameController, context, r -> "chooseCities() did not return a object of the correct Type!");
+                assertTrue(actual.invoked instanceof GameController, context,
+                        r -> "chooseCities() did not return a object of the correct Type!");
                 GameController expectedGameController = ((GameController) (expected));
                 GameController actualGameController = ((GameController) (actual.invoked));
                 actualGameController.getState().getGrid().getEdges().entrySet().forEach(edges -> {
-                    assertTrue(!edges.getValue().getRailOwners().isEmpty(), context, r -> "GameController did not call waitForBuild() correctly");
+                    assertTrue(!edges.getValue().getRailOwners().isEmpty(), context,
+                            r -> "GameController did not call waitForBuild() correctly");
                 });
-                assertEquals(expectedGameController.roundCounterProperty().get(), actualGameController.roundCounterProperty().get(), context, r -> "roundCounter does not match expected.");
+                assertEquals(expectedGameController.roundCounterProperty().get(),
+                        actualGameController.roundCounterProperty().get(), context,
+                        r -> "roundCounter does not match expected.");
                 verify(actualGameController, atLeast(1)).withActivePlayer(any(), any());
                 verify(actualGameController, atLeast(1)).castDice();
                 actualGameController.getPlayerControllers().values().forEach(pc -> {
@@ -126,7 +136,6 @@ public class GameControllerTest {
         return Project_TestP.parseJsonFile("hProjekt/controller/GameController_executeBuildingPhase.json");
     }
 
-
     @ParameterizedTest
     @MethodSource("provideLetPlayersChoosePath")
     public void testLetPlayersChoosePath(ObjectNode node) throws NoSuchMethodException {
@@ -138,27 +147,30 @@ public class GameControllerTest {
             ReflectionUtilsP.getUnsafe().throwException(results.getLast().exception);
         }
 
-
         Throwable lastCall = null;
-        for (StudentMethodCall actual: results) {
+        for (StudentMethodCall actual : results) {
             if (actual.call == null) {
                 lastCall = actual.exception;
                 continue;
             }
             try {
                 Context context = contextBuilder()
-                    .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
-                    .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
-                    .build();
+                        .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
+                        .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
+                        .build();
 
-                assertTrue(actual.invoked instanceof GameController, context, r -> "letPlayersChoosePath() did not return a object of the correct Type!");
+                assertTrue(actual.invoked instanceof GameController, context,
+                        r -> "letPlayersChoosePath() did not return a object of the correct Type!");
                 GameController expectedGameController = ((GameController) (expected));
                 GameController actualGameController = ((GameController) (actual.invoked));
                 actualGameController.getPlayerControllers().values().forEach(apc -> {
-                    boolean actualMatchesExpected = expectedGameController.getPlayerControllers().values().stream().anyMatch(epc -> ReflectionUtilsP.equalsForMocks(apc, epc));
-                    assertTrue(actualMatchesExpected, context, r -> ("Player Controller " + apc) + " does not match any expected Player controller!");
+                    boolean actualMatchesExpected = expectedGameController.getPlayerControllers().values().stream()
+                            .anyMatch(epc -> ReflectionUtilsP.equalsForMocks(apc, epc));
+                    assertTrue(actualMatchesExpected, context,
+                            r -> ("Player Controller " + apc) + " does not match any expected Player controller!");
                 });
-                assertContainsAll(((GameController) (expected)).getState().getPlayerPositions(), actualGameController.getState().getPlayerPositions(), context);
+                assertContainsAll(((GameController) (expected)).getState().getPlayerPositions(),
+                        actualGameController.getState().getPlayerPositions(), context);
                 return;
             } catch (Throwable e) {
                 lastCall = e;
@@ -183,18 +195,17 @@ public class GameControllerTest {
             ReflectionUtilsP.getUnsafe().throwException(results.getLast().exception);
         }
 
-
         Throwable lastCall = null;
-        for (StudentMethodCall actual: results) {
+        for (StudentMethodCall actual : results) {
             if (actual.call == null) {
                 lastCall = actual.exception;
                 continue;
             }
             try {
                 Context context = contextBuilder()
-                    .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
-                    .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
-                    .build();
+                        .add("invoked", actual.invoked != null ? actual.invoked : "unknown")
+                        .add("parameters", actual.call != null ? actual.call.arguments() : "unknown")
+                        .build();
 
                 assertContainsAll((List<Object>) expected, (List<Object>) actual.call.returnValue(), context);
                 return;

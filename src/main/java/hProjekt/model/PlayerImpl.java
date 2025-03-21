@@ -107,7 +107,13 @@ public class PlayerImpl implements Player {
 
     @Override
     public String toString() {
-        return String.format("Player %d %s (%s)", getID(), getName(), getColor());
+        return "PlayerImpl[" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", color=" + color +
+                ", aiController=" + aiController +
+                ", credits=" + credits +
+                ']';
     }
 
     @Override

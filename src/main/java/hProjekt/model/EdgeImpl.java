@@ -211,4 +211,13 @@ public record EdgeImpl(HexGrid grid, TilePosition position1, TilePosition positi
 
         return connectedEdges;
     }
+
+    @Override
+    public String toString() {
+        return "EdgeImpl[" +
+                "position1=" + position1 +
+                ", position2=" + position2 +
+                ", railOwners=" + railOwners +
+                "]";
+    }
 }

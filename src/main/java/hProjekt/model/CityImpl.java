@@ -32,4 +32,13 @@ public record CityImpl(
     public boolean isStartingCity() {
         return isStartingCity;
     }
+
+    @Override
+    public String toString() {
+        return "CityImpl[" +
+                "position=" + position +
+                ", name='" + name + '\'' +
+                ", isStartingCity=" + isStartingCity +
+                "]";
+    }
 }
