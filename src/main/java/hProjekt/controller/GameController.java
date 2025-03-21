@@ -306,25 +306,28 @@ public class GameController {
 
             Map<TilePosition, City> cities = getState().getGrid().getCities();
 
-            List<TilePosition> cityPositions = new ArrayList<>(cities.keySet());
+            if (cities.size() >= 2) {
 
-            int randomStartCity = Config.RANDOM.nextInt(cityPositions.size());
-            City startCity = cities.get(cityPositions.get(randomStartCity));
+                List<TilePosition> cityPositions = new ArrayList<>(cities.keySet());
 
-            int randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
-            City finishCity = cities.get(cityPositions.get(randomForFinishCity));
+                int randomStartCity = Config.RANDOM.nextInt(cityPositions.size());
+                City startCity = cities.get(cityPositions.get(randomStartCity));
 
-            if (finishCity.equals(startCity) == true) {
-                while (finishCity.equals(startCity) == true) {
-                    randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
-                    finishCity = cities.get(cityPositions.get(randomForFinishCity));
+                int randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
+                City finishCity = cities.get(cityPositions.get(randomForFinishCity));
+
+                if (finishCity.equals(startCity) == true) {
+                    while (finishCity.equals(startCity) == true) {
+                        randomForFinishCity = Config.RANDOM.nextInt(cityPositions.size());
+                        finishCity = cities.get(cityPositions.get(randomForFinishCity));
+                    }
                 }
+
+                getState().addChosenCity(startCity);
+                getState().addChosenCity(finishCity);
+
+                chosenCitiesProperty = new SimpleObjectProperty<>(new Pair<>(startCity, finishCity));
             }
-
-            getState().addChosenCity(startCity);
-            getState().addChosenCity(finishCity);
-
-            chosenCitiesProperty = new SimpleObjectProperty<>(new Pair<>(startCity, finishCity));
         }
 
 
